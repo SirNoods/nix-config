@@ -112,6 +112,7 @@
     tealdeer
     xclip
     bat
+    openssh
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
