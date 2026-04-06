@@ -7,6 +7,7 @@
     home.stateVersion = "25.11";
     programs.bash = {
         enable = true;
+        enableCompletion = true;
         shellAliases = {
             btw = "echo 'fix nixes this'";
         };
