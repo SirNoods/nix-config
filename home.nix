@@ -8,7 +8,7 @@
     programs.bash = {
         enable = true;
         shellAliases = {
-            btw = "fix nixes this";
+            btw = "echo 'fix nixes this'";
         };
     };
 
