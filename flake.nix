@@ -22,5 +22,19 @@
       }
       ];
     };
+    nixosConfigurations.glyph = nixpkgs.lib.nixosSystem {
+      modules = [
+      ./hosts/glyph/configuration.nix
+      home-manager.nixosModules.home-manager
+      {
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          users.goshva = import ./home.nix;
+          backupFileExtension = "backup";
+        };
+      }
+      ];
+    };
   };
 }
