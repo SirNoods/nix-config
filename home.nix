@@ -14,6 +14,7 @@
         enableCompletion = true;
         shellAliases = {
             btw = "echo 'fix nixes this bitch'";
+	    nrs = "sudo nixos-rebuild switch --flake .";
         };
     };
 
