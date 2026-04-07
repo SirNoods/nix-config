@@ -9,7 +9,7 @@
         enable = true;
         enableCompletion = true;
         shellAliases = {
-            btw = "echo 'fix nixes this'";
+            btw = "echo 'fix nixes this bitch'";
         };
     };
 

@@ -10,7 +10,7 @@
   outputs = { self, nixpkgs, home-manager, ... }: {
     nixosConfigurations.gasket = nixpkgs.lib.nixosSystem {
       modules = [
-      ./configuration.nix
+      ./hosts/gasket/configuration.nix
       home-manager.nixosModules.home-manager
       {
         home-manager = {
