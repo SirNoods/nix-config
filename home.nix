@@ -1,9 +1,9 @@
 { config, pkgs, inputs, ...}:
 
 {
-    imports = [
-        inputs.noctalia.homeModules.default
-        ];
+    #imports = [
+    #    inputs.noctalia.homeModules.default
+    #    ];
 
     home.username = "goshva";
     home.homeDirectory = "/home/goshva";
@@ -14,22 +14,22 @@
         };
     home.stateVersion = "25.11";
 
-    programs.noctalia-shell = {
-        enable = true;
-        settings = {
-            bar = {
-                density = "compact";
-                position = "top";
-                showCapsule = true;
-            };
-            colorSchemes.predefinedScheme = "Gruvbox";
-            location = {
-                monthBeforeDay = false;
-                name = "Leipzig, Germany";
-            };
+    #programs.noctalia-shell = {
+    #    enable = true;
+    #    settings = {
+    #        bar = {
+    #            density = "compact";
+    #            position = "top";
+    #            showCapsule = true;
+    #        };
+    #        colorSchemes.predefinedScheme = "Gruvbox";
+    #        location = {
+    #            monthBeforeDay = false;
+    #            name = "Leipzig, Germany";
+    #        };
 
-        };
-    };
+    #    };
+    #};
 
     #Bish Bash Bosh
     programs.bash = {
