@@ -40,6 +40,21 @@
     #    };
     #};
 
+    # Paraing up my xdg user directories
+    xdg.userDirs = {
+        enable = true;
+        createDirectories = true;
+
+        desktop = null;
+        documents = "${config.home.homeDirectory}/3_Resources/Documents";
+        download = "${config.home.homeDirectory}/Downloads";
+        music = "${config.home.homeDirectory}/3_Resources/Audio";
+        pictures = "${config.home.homeDirectory}/3_Resources/Pictures";
+        videos = "${config.home.homeDirectory}/3_Resources/Videos";
+        publicShare = null;
+        templates = null;
+    };
+
     # Vicinae, Hoorae
     services.vicinae = {
         enable = true;
