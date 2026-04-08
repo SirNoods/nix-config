@@ -88,6 +88,17 @@
     ];
   };
 
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
+        user = "greeter";
+      };
+    };
+  };
+  programs.niri.enable = true;
+
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -105,6 +116,7 @@
     tree
     bat
     openssh
+    alacritty
   ];
 
   fonts.packages = with pkgs; [
@@ -124,7 +136,8 @@
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
-  programs.ssh.startAgent = true;
+  # currently disabled for niri testing
+  # programs.ssh.startAgent = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
