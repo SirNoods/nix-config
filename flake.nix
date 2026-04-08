@@ -54,6 +54,7 @@
           useUserPackages = true;
           users.goshva = import ./home.nix;
           backupFileExtension = "backup";
+          extraSpecialArgs = { inherit inputs; };
         };
       }
       ];

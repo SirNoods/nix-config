@@ -44,11 +44,6 @@
     LC_TIME = "de_DE.UTF-8";
   };
 
-  # gasket graphics stack off for now.
-  services.xserver.enable = false;
-  services.displayManager.sddm.enable = false;
-  services.desktopManager.plasma6.enable = false;
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "de";
