@@ -17,8 +17,11 @@
   networking.hostName = "glyph"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Enable networking
+  # Enable networking and noctalia things
   networking.networkmanager.enable = true;
+  hardware.bluetooth.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
 
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes"];
@@ -40,14 +43,6 @@
     LC_TELEPHONE = "de_DE.UTF-8";
     LC_TIME = "de_DE.UTF-8";
   };
-
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -91,6 +86,30 @@
     ];
   };
 
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = ''
+            ${pkgs.greetd.tuigreet}/bin/tuigreet \
+            --time \
+            --user-menu \
+            --width 60 \
+            --window-padding 2 \
+            --container-padding 2 \
+            --theme 'border=white;text=white;prompt=cyan;time=white;action=blue;button=white;container=black' \
+            --asterisks \
+            --remember \
+            --cmd niri-session
+        '';
+        user = "greeter";
+      };
+    };
+  };
+  
+  # NIRI
+  programs.niri.enable = true;
+
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -108,12 +127,15 @@
     tree
     bat
     openssh
+    alacritty
   ];
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
   ];
 
+  services.gvfs.enable = true;
+  
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

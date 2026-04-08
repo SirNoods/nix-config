@@ -99,7 +99,6 @@
             --container-padding 2 \
             --theme 'border=white;text=white;prompt=cyan;time=white;action=blue;button=white;container=black' \
             --asterisks \
-            --greeting \"Login mothertrucker\" \
             --remember \
             --cmd niri-session
         '';
@@ -107,6 +106,8 @@
       };
     };
   };
+
+  # NIRI
   programs.niri.enable = true;
 
   # Install firefox.
