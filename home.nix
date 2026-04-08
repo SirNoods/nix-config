@@ -44,7 +44,7 @@
         enable = true;
         systemd = {
             enable = true;
-            autostart = true;
+            autoStart = true;
             environment = {
                 USE_LAYER_SHELL = 1;
             };
