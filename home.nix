@@ -19,6 +19,9 @@
         inputs.noctalia.packages.${pkgs.system}.default
     ];
 
+    home.file.".config/niri/config.kdl".source =
+        config.lib.file.mkOutOfStoreSymlink "/home/goshva/nix-config/niri/config.kdl";
+
     #programs.noctalia-shell = {
     #    enable = true;
     #    settings = {
