@@ -17,6 +17,7 @@
     # Install Noctalia (only use if the programs.noctalia is commented out)
     home.packages = [
         inputs.noctalia.packages.${pkgs.system}.default
+        pkgs.nautilus
     ];
 
     home.file.".config/niri/config.kdl".source =
