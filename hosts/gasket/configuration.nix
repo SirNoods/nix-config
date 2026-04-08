@@ -92,7 +92,19 @@
     enable = true;
     settings = {
       default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd niri-session";
+        command = ''
+            ${pkgs.greetd.tuigreet}/bin/tuigreet \
+            --time \
+            --user-menu \
+            --width 60 \
+            --window-padding 2 \
+            --container-padding 2 \
+            --theme 'border=white;text=white;prompt=cyan;time=white;action=blue;button=white;container=black' \
+            --asterisks \
+            --greeting \"Login mothertrucker\" \
+            --remember \
+            --cmd niri-session
+        '';
         user = "greeter";
       };
     };
