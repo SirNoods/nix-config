@@ -1,9 +1,15 @@
 {
-  description = "A very basic flake";
+  description = "Goshva Goshva Goshva";
 
   nixConfig = {
-  extra-substituters = [ "https://noctalia.cachix.org" ];
-  extra-trusted-public-keys = [ "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=" ];
+  extra-substituters = [ 
+    "https://noctalia.cachix.org"
+    "https://vicinae.cachix.org"
+  ];
+  extra-trusted-public-keys = [
+    "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+    "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
+  ];
   };
 
   inputs = {
@@ -18,6 +24,8 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    vicinae.url = "github:vicinaehq/vicinae";
 
   };
   outputs = inputs@{ self, nixpkgs, home-manager, ... }: {

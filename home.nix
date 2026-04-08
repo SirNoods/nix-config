@@ -1,9 +1,9 @@
 { config, pkgs, inputs, ...}:
 
 {
-    #imports = [
-    #    inputs.noctalia.homeModules.default
-    #    ];
+    imports = [
+        inputs.vicinae.homeManagerModules.default
+        ];
 
     home.username = "goshva";
     home.homeDirectory = "/home/goshva";
@@ -38,6 +38,18 @@
 
     #    };
     #};
+
+    # Vicinae, Hoorae
+    services.vicinae = {
+        enable = true;
+        systemd = {
+            enable = true;
+            autostart = true;
+            environment = {
+                USE_LAYER_SHELL = 1;
+            };
+        };
+    };
 
     #Bish Bash Bosh
     programs.bash = {
