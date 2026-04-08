@@ -17,8 +17,11 @@
   networking.hostName = "gasket"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Enable networking
+  # Enable networking and noctalia things
   networking.networkmanager.enable = true;
+  hardware.bluetooth.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
 
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes"];
