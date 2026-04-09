@@ -128,6 +128,9 @@
     bat
     openssh
     alacritty
+    networkmanager-openvpn
+    networkmanager-wireguard
+    networkmanager-applet
   ];
 
   fonts.packages = with pkgs; [
