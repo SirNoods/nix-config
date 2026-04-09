@@ -23,6 +23,9 @@
     home.file.".config/niri/config.kdl".source =
         config.lib.file.mkOutOfStoreSymlink "/home/goshva/nix-config/niri/${osConfig.networking.hostName}.kdl";
 
+    home.file.".config/ghostty/config.ghostty".source =
+        config.lib.file.mkOutOfStoreSymlink "/home/goshva/nix-config/ghostty/config.ghostty";
+
     #programs.noctalia-shell = {
     #    enable = true;
     #    settings = {
