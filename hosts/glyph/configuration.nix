@@ -136,6 +136,7 @@
     bat
     openssh
     alacritty
+    libnotify
   ];
 
   fonts.packages = with pkgs; [

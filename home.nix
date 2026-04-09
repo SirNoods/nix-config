@@ -76,7 +76,7 @@
         enableCompletion = true;
         shellAliases = {
             btw = "echo 'fix nixes this bitch'";
-	    nrs = "sudo nixos-rebuild switch --flake .";
+	    nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
         };
     };
 
