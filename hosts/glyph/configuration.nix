@@ -114,6 +114,7 @@
     tldr
     tree
     bat
+    btop
     openssh
     alacritty
     libnotify
