@@ -7,16 +7,11 @@
 
     home.username = "goshva";
     home.homeDirectory = "/home/goshva";
-    programs.git = {
-        enable = true;
-        userName = "goshva";
-        userEmail = "goshva@goshva.cool";
-        };
     home.stateVersion = "25.11";
 
     # Install Noctalia (only use if the programs.noctalia is commented out)
     home.packages = [
-        inputs.noctalia.packages.${pkgs.system}.default
+        inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
         pkgs.nautilus
     ];
 
@@ -26,27 +21,11 @@
     home.file.".config/ghostty/config.ghostty".source =
         config.lib.file.mkOutOfStoreSymlink "/home/goshva/nix-config/ghostty/config.ghostty";
 
-    #programs.noctalia-shell = {
-    #    enable = true;
-    #    settings = {
-    #        bar = {
-    #            density = "compact";
-    #            position = "top";
-    #            showCapsule = true;
-    #        };
-    #        colorSchemes.predefinedScheme = "Gruvbox";
-    #        location = {
-    #            monthBeforeDay = false;
-    #            name = "Leipzig, Germany";
-    #        };
-
-    #    };
-    #};
-
     # Paraing up my xdg user directories
     xdg.userDirs = {
         enable = true;
         createDirectories = true;
+        setSessionVariables = true;
 
         desktop = null;
         documents = "${config.home.homeDirectory}/3_Resources/Documents";
@@ -68,6 +47,13 @@
                 USE_LAYER_SHELL = 1;
             };
         };
+    };
+
+    # git git git
+    programs.git = {
+    enable = true;
+    settings.user.name = "goshva";
+    settings.user.email = "goshva@goshva.cool";
     };
 
     #Bish Bash Bosh

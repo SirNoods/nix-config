@@ -14,7 +14,7 @@
 
   environment.systemPackages = with pkgs; [
     podman
-    xorg.xhost
+    xhost
   ];
 
   virtualisation.podman = {
