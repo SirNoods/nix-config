@@ -8,6 +8,7 @@
   imports =
     [
       ./hardware-configuration.nix
+      ../../modules/rgs.nix
     ];
 
   # Bootloader.
@@ -90,7 +91,6 @@
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       kdePackages.kate
-    #  thunderbird
     ];
   };
 
@@ -137,12 +137,7 @@
     openssh
     alacritty
     libnotify
-
-    # rgs testing area
-    podman
     xwayland-satellite
-    xorg.xhost
-    # /rgs testing area
   ];
 
   fonts.packages = with pkgs; [
@@ -150,14 +145,7 @@
   ];
 
   services.gvfs.enable = true;
-  
-  # more rgs testing area
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    defaultNetwork.settings.dns_enable = true;
-  };
-  #/more rgs testing area
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

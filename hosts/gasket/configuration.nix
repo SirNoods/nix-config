@@ -8,6 +8,7 @@
   imports =
     [
       ./hardware-configuration.nix
+      ../../modules/rgs.nix
     ];
 
   # Bootloader.
@@ -127,14 +128,7 @@
     bat
     openssh
     alacritty
-
-    # rgs testing area
-    podman
-    podman-compose
     xwayland-satellite
-    distrobox
-    xorg.xhost
-    # /rgs testing area
   ];
 
   fonts.packages = with pkgs; [
@@ -143,12 +137,6 @@
 
   services.gvfs.enable = true;
   
-  # more rgs testing area
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    defaultNetwork.settings.dns_enable = true;
-  };
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
