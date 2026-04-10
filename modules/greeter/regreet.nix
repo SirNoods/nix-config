@@ -1,5 +1,5 @@
 { pkgs, ... }:
-
+# experiment, do not use, it is shit
 {
   services.greetd = {
     enable = true;

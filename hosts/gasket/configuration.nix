@@ -9,7 +9,7 @@
     [
       ./hardware-configuration.nix
       ../../modules/rgs.nix
-      ../../modules/greeter.nix
+      ../../modules/greeter/tuigreet.nix
     ];
 
   # Bootloader.
