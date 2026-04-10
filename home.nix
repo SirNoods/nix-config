@@ -76,7 +76,7 @@
         enableCompletion = true;
         shellAliases = {
             btw = "echo 'fix nixes this bitch'";
-	    nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
+            nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
             rgs = "xhost +local: && podman run -ti --rm -e DISPLAY --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW localhost/rgreceiver";
         };
     };

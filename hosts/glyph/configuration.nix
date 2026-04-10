@@ -140,9 +140,7 @@
 
     # rgs testing area
     podman
-    podman-compose
     xwayland-satellite
-    distrobox
     xorg.xhost
     # /rgs testing area
   ];
