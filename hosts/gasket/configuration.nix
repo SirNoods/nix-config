@@ -8,6 +8,7 @@
   imports =
     [
       ./hardware-configuration.nix
+      ../../modules/rgs.nix
     ];
 
   # Bootloader.
@@ -82,7 +83,6 @@
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       kdePackages.kate
-    #  thunderbird
     ];
   };
 
@@ -128,6 +128,7 @@
     bat
     openssh
     alacritty
+    xwayland-satellite
   ];
 
   fonts.packages = with pkgs; [
@@ -135,7 +136,7 @@
   ];
 
   services.gvfs.enable = true;
-
+  
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
