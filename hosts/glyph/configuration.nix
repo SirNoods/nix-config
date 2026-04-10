@@ -119,6 +119,7 @@
     libnotify
     xwayland-satellite
     netbird
+    jellyfin-desktop
   ];
 
   fonts.packages = with pkgs; [
