@@ -18,6 +18,14 @@
     home.packages = [
         inputs.noctalia.packages.${pkgs.system}.default
         pkgs.nautilus
+	(pkgs.writeShellScriptBin "rgreceiver" ''
+          export PATH=${pkgs.lib.makeBinPath [
+            pkgs.pciutils
+            pkgs.coreutils
+            pkgs.bash
+          ]}:$PATH
+          exec /opt/hpremote/rgreceiver/rgreceiver "$@"
+        '')
     ];
 
     home.file.".config/niri/config.kdl".source =

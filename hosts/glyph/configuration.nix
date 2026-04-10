@@ -137,7 +137,81 @@
     openssh
     alacritty
     libnotify
+    xwayland-satellite
+    #OPT TESTING
+    pciutils
+    (buildFHSEnv {
+      name = "rgreceiver-env";
+      targetPkgs = pkgs: with pkgs; [
+        pciutils
+        alsa-lib
+        freetype
+        glib
+        libGL
+        libpulseaudio
+        stdenv.cc.cc.lib
+        zlib
+        systemd
+
+        libxkbcommon
+        xorg.libSM
+        xorg.libX11
+        xorg.libXext
+        xorg.libXrender
+        xorg.libXinerama
+        xorg.libXi
+        xorg.libXft
+        xorg.libxcb
+        xorg.libXrandr
+        xorg.libXdamage
+        xorg.libXfixes
+        xorg.libXcomposite
+      ];
+      runScript = "/opt/hpremote/rgreceiver/nix_rgreceiver.sh";
+    })
+    (buildFHSEnv {
+      name = "rgreceiver-shell";
+      targetPkgs = pkgs: with pkgs; [
+        pciutils
+        alsa-lib
+        freetype
+        fontconfig
+        glib
+        zlib
+        systemd
+        dbus
+        libpulseaudio
+        stdenv.cc.cc.lib
+        mesa
+        libGL
+        strace
+        binutils
+
+        libxkbcommon
+        xkeyboard_config
+        xorg.libSM
+        xorg.libX11
+        xorg.libXext
+        xorg.libXrender
+        xorg.libXinerama
+        xorg.libXi
+        xorg.libXft
+        xorg.libXrandr
+        xorg.libXdamage
+        xorg.libXfixes
+        xorg.libXcomposite
+        xorg.libxcb
+        xorg.xcbutil
+        xorg.xcbutilimage
+        xorg.xcbutilkeysyms
+        xorg.xcbutilrenderutil
+        xorg.xcbutilwm
+        xorg.libxkbfile
+      ];
+      runScript = "bash";
+    })
   ];
+#END OF OPT TESTING
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
@@ -145,6 +219,31 @@
 
   services.gvfs.enable = true;
   
+  #OPT TESTING
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      freetype
+      glib
+      alsa-lib
+      libpulseaudio
+      systemd
+      xorg.libX11
+      xorg.libXext
+      xorg.libXrender
+      xorg.libXinerama
+      xorg.libXi
+      xorg.libXft
+      xorg.libSM
+      xorg.libxcb
+      libGL
+      udev
+    ];
+  };
+  # END OF OPT TESTING
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
