@@ -76,7 +76,12 @@
         enableCompletion = true;
         shellAliases = {
             btw = "echo 'fix nixes this bitch'";
-	    nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
+	        nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
+            #rgs testing area
+            rgs-xwayland = "xwayland-satellite :0 &";
+            rgs-receiver = "podman run -ti --rm --network host -e DISPLAY=:0 -v /tmp/.X11-unix:/tmp/.X11-unix:rw localhost/rgreceiver";
+            rgs-build = "podman build -t rgreceiver -f ./ContainerFile .";
+            #/rgs testing area
         };
     };
 

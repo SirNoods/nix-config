@@ -82,7 +82,6 @@
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       kdePackages.kate
-    #  thunderbird
     ];
   };
 
@@ -128,6 +127,13 @@
     bat
     openssh
     alacritty
+
+    # rgs testing area
+    podman
+    podman-compose
+    xwayland-satellite
+    distrobox
+    # /rgs testing area
   ];
 
   fonts.packages = with pkgs; [
