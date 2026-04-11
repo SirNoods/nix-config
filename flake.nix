@@ -27,9 +27,16 @@
 
     vicinae.url = "github:vicinaehq/vicinae";
 
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
+
   outputs = inputs@{ self, nixpkgs, home-manager, ... }: {
     nixosConfigurations.galahad = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
       modules = [
       ./hosts/galahad/configuration.nix
       home-manager.nixosModules.home-manager

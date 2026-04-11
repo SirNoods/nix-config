@@ -101,7 +101,8 @@
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "noctalia": "noctalia",
-        "vicinae": "vicinae"
+        "vicinae": "vicinae",
+        "zen-browser": "zen-browser"
       }
     },
     "systems": {
@@ -172,6 +173,26 @@
       "original": {
         "owner": "vicinaehq",
         "repo": "vicinae",
+        "type": "github"
+      }
+    },
+    "zen-browser": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775710180,
+        "narHash": "sha256-sCokvdNvl8zIzsnjgG0TN5h3RUI7GJyWW9ErfmEj0rM=",
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
+        "rev": "2c138beb648d1cbbfae76695a8230ee04e4db25a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
         "type": "github"
       }
     }
