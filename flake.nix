@@ -29,6 +29,21 @@
 
   };
   outputs = inputs@{ self, nixpkgs, home-manager, ... }: {
+    nixosConfigurations.galahad = nixpkgs.lib.nixosSystem {
+      modules = [
+      ./hosts/galahad/configuration.nix
+      home-manager.nixosModules.home-manager
+      {
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          users.goshva = import ./home.nix;
+          backupFileExtension = "backup";
+          extraSpecialArgs = { inherit inputs; };
+        };
+      }
+      ];
+    };
     nixosConfigurations.gasket = nixpkgs.lib.nixosSystem {
       modules = [
       ./hosts/gasket/configuration.nix
