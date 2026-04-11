@@ -136,6 +136,7 @@
     spotify
     unzip
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    playerctl
   ];
 
   fonts.packages = with pkgs; [
