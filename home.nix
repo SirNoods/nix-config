@@ -37,6 +37,14 @@
         templates = null;
     };
 
+    home.pointerCursor = {
+        gtk.enable = true;
+        x11.enable = true;
+        package = pkgs.adwaita-icon-theme;
+        name = "Adwaita";
+        size = 12;
+    };
+
     # Vicinae, Hoorae
     services.vicinae = {
         enable = true;

@@ -9,7 +9,6 @@
     [
       ./hardware-configuration.nix
       ../../modules/rgs.nix
-      ../../modules/greeter/tuigreet.nix
       ../../modules/steam.nix
     ];
 
@@ -98,7 +97,10 @@
   
   # NIRI
   programs.niri.enable = true;
-
+  #GREETER DEBUG BS
+  services.xserver.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.defaultSession = "niri";
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -154,7 +156,13 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = true;
+      PermitRootLogin = "yes"; # temp for debugging
+    };
+  };
 
   # programs.ssh.startAgent = true;
 
