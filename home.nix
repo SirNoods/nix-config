@@ -71,7 +71,18 @@
         shellAliases = {
             btw = "echo 'fix nixes this bitch'";
             nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
-            rgs = "xhost +local: && podman run -ti --rm -e DISPLAY --net=host --cap-add=NET_ADMIN --cap-add=NET_RAW localhost/rgreceiver";
+            rgs = ''
+            xhost +si:localuser:$USER >/dev/null 2>&1; podman run --rm -it \
+            --userns=keep-id \
+            --group-add keep-groups \
+            --net=host \
+            --security-opt label=disable \
+            -e DISPLAY="$DISPLAY" \
+            -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+            -v "$HOME/.local/share/rgreceiver:/root" \
+            --device /dev/dri \
+            localhost/rgreceiver
+            '';
         };
     };
 
