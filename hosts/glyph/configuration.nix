@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ../../modules/rgs.nix
       ../../modules/greeter/tuigreet.nix
+      ../../modules/steam.nix
     ];
 
   # Bootloader.
@@ -121,6 +122,11 @@
     xwayland-satellite
     netbird
     jellyfin-desktop
+    discord
+    obsidian
+    prismlauncher
+    heroic
+    bitwarden-desktop
   ];
 
   fonts.packages = with pkgs; [
