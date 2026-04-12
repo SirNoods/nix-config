@@ -137,9 +137,20 @@
     unzip
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     playerctl
+    #firefox theming things
     pywalfox-native
     pywal
+    #screenshot area
+    grim
+    slurp
+    wl-clipboard
+    satty
   ];
+
+  xdg.portal = {
+  enable = true;
+  wlr.enable = true;
+};
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
@@ -175,6 +186,10 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  networking.extraHosts = ''
+    192.168.178.32 caithawiki.joshs.tech
+  '';
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
