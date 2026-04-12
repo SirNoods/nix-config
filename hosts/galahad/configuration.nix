@@ -183,14 +183,7 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = true;
-    settings = {
-      PasswordAuthentication = true;
-      PermitRootLogin = "yes"; # temp for debugging
-    };
-  };
-
+  services.openssh.enable = true;
   # programs.ssh.startAgent = true;
 
   # Open ports in the firewall.
@@ -200,7 +193,9 @@
   # networking.firewall.enable = false;
 
   networking.extraHosts = ''
+    192.168.178.32 goblin
     192.168.178.32 caithawiki.joshs.tech
+    192.168.178.32 foundry.joshs.tech
   '';
 
   # This value determines the NixOS release from which the default

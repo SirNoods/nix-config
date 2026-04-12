@@ -54,6 +54,7 @@
       ];
     };
     nixosConfigurations.gasket = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
       modules = [
       ./hosts/gasket/configuration.nix
       home-manager.nixosModules.home-manager
@@ -69,6 +70,7 @@
       ];
     };
     nixosConfigurations.glyph = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
       modules = [
       ./hosts/glyph/configuration.nix
       home-manager.nixosModules.home-manager
