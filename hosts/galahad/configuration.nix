@@ -3,7 +3,9 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, inputs, ... }:
-
+  let
+    mesa25Pkgs = inputs.nixpkgs-mesa25.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+  in
 {
   imports =
     [
@@ -159,6 +161,16 @@
   services.gvfs.enable = true;
 
   services.netbird.enable = true;
+  # graphics stack test
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+
+    package = mesa25Pkgs.mesa;
+    package32 = mesa25Pkgs.pkgsi686Linux.mesa;
+  };
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

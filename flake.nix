@@ -14,6 +14,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    #mesa rollback?
+    nixpkgs-mesa25.url = "github:NixOS/nixpkgs/nixos-25.05";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -34,7 +36,7 @@
 
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, ... }: {
+  outputs = inputs@{ self, nixpkgs, home-manager, nixpkgs-mesa25, ... }: {
     nixosConfigurations.galahad = nixpkgs.lib.nixosSystem {
       specialArgs = { inherit inputs; };
       modules = [
