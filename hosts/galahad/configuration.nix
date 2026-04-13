@@ -115,6 +115,7 @@
     wget
     ghostty
     vscodium
+    nixfmt
     git
     tldr
     tree
@@ -139,6 +140,7 @@
     unzip
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     playerctl
+    easyeffects
     #firefox theming things
     pywalfox-native
     pywal
@@ -147,6 +149,7 @@
     slurp
     wl-clipboard
     satty
+    
   ];
 
   xdg.portal = {
