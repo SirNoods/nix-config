@@ -2,14 +2,14 @@
   description = "Goshva Goshva Goshva";
 
   nixConfig = {
-  extra-substituters = [ 
-    "https://noctalia.cachix.org"
-    "https://vicinae.cachix.org"
-  ];
-  extra-trusted-public-keys = [
-    "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
-    "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
-  ];
+    extra-substituters = [
+      "https://noctalia.cachix.org"
+      "https://vicinae.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+      "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
+    ];
   };
 
   inputs = {
@@ -36,54 +36,62 @@
 
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, nixpkgs-mesa25, ... }: {
-    nixosConfigurations.galahad = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-      ./hosts/galahad/configuration.nix
-      home-manager.nixosModules.home-manager
-      {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          users.goshva = import ./home.nix;
-          backupFileExtension = "backup";
-          extraSpecialArgs = { inherit inputs; };
-        };
-      }
-      ];
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      nixpkgs-mesa25,
+      ...
+    }:
+    {
+      nixosConfigurations.galahad = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/galahad/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.goshva = import ./home.nix;
+              backupFileExtension = "backup";
+              extraSpecialArgs = { inherit inputs; };
+            };
+          }
+        ];
+      };
+      nixosConfigurations.gasket = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/gasket/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.goshva = import ./home.nix;
+              backupFileExtension = "backup";
+              extraSpecialArgs = { inherit inputs; };
+            };
+          }
+        ];
+      };
+      nixosConfigurations.glyph = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/glyph/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.goshva = import ./home.nix;
+              backupFileExtension = "backup";
+              extraSpecialArgs = { inherit inputs; };
+            };
+          }
+        ];
+      };
     };
-    nixosConfigurations.gasket = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-      ./hosts/gasket/configuration.nix
-      home-manager.nixosModules.home-manager
-      {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          users.goshva = import ./home.nix;
-          backupFileExtension = "backup";
-          extraSpecialArgs = { inherit inputs; };
-        };
-      }
-      ];
-    };
-    nixosConfigurations.glyph = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-      ./hosts/glyph/configuration.nix
-      home-manager.nixosModules.home-manager
-      {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          users.goshva = import ./home.nix;
-          backupFileExtension = "backup";
-          extraSpecialArgs = { inherit inputs; };
-        };
-      }
-      ];
-    };
-  };
 }

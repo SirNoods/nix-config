@@ -2,17 +2,21 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
-  let
-    mesa25Pkgs = inputs.nixpkgs-mesa25.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-  in
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-      ../../modules/rgs.nix
-      ../../modules/steam.nix
-    ];
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
+let
+  mesa25Pkgs = inputs.nixpkgs-mesa25.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in
+{
+  imports = [
+    ./hardware-configuration.nix
+    ../../modules/rgs.nix
+    ../../modules/steam.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -34,9 +38,11 @@
   #for vpns
   programs.nm-applet.enable = true;
 
-
   # Enable Flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes"];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -91,12 +97,15 @@
   users.users.goshva = {
     isNormalUser = true;
     description = "goshva";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
       kdePackages.kate
     ];
   };
-  
+
   # NIRI
   programs.niri.enable = true;
   #GREETER DEBUG BS
@@ -149,13 +158,13 @@
     slurp
     wl-clipboard
     satty
-    
+
   ];
 
   xdg.portal = {
-  enable = true;
-  wlr.enable = true;
-};
+    enable = true;
+    wlr.enable = true;
+  };
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
@@ -173,7 +182,6 @@
     package = mesa25Pkgs.mesa;
     package32 = mesa25Pkgs.pkgsi686Linux.mesa;
   };
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

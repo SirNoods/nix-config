@@ -5,12 +5,11 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-      ../../modules/rgs.nix
-      ../../modules/greeter/tuigreet.nix
-    ];
+  imports = [
+    ./hardware-configuration.nix
+    ../../modules/rgs.nix
+    ../../modules/greeter/tuigreet.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -26,7 +25,10 @@
   services.upower.enable = true;
 
   # Enable Flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes"];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -81,7 +83,10 @@
   users.users.goshva = {
     isNormalUser = true;
     description = "goshva";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
       kdePackages.kate
     ];
@@ -116,7 +121,7 @@
   ];
 
   services.gvfs.enable = true;
-  
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
