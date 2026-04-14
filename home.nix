@@ -28,6 +28,12 @@
     config.lib.file.mkOutOfStoreSymlink "/home/goshva/nix-config/ghostty/config.ghostty";
 
   # Paraing up my xdg user directories
+
+  services.easyeffects = {
+    enable = true;
+    preset = "headsetmic";
+  };
+
   xdg.userDirs = {
     enable = true;
     createDirectories = true;
