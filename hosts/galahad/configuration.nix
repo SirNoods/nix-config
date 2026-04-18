@@ -158,6 +158,8 @@ in
     slurp
     wl-clipboard
     satty
+    vlc
+    blender
   ];
 
   xdg.portal = {
