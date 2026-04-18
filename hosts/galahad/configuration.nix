@@ -158,7 +158,6 @@ in
     slurp
     wl-clipboard
     satty
-
   ];
 
   xdg.portal = {
@@ -173,8 +172,7 @@ in
   services.gvfs.enable = true;
 
   services.netbird.enable = true;
-  # graphics stack test
-
+  
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -208,6 +206,13 @@ in
     192.168.178.32 caithawiki.joshs.tech
     192.168.178.32 foundry.joshs.tech
   '';
+
+  #mounting the hdd
+  # 6109c55d-cf54-47b1-bca9-4ee175dffbd8
+  fileSystems."/mnt/hdd" = {
+  device = "/dev/disk/by-uuid/6109c55d-cf54-47b1-bca9-4ee175dffbd8";
+  fsType = "ext4";
+};
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
