@@ -9,6 +9,7 @@
 {
   imports = [
     inputs.vicinae.homeManagerModules.default
+    ./modules/obs-split.nix
   ];
 
   home.username = "goshva";
@@ -32,6 +33,12 @@
   services.easyeffects = {
     enable = true;
     preset = "headsetmic";
+  };
+
+  programs.obs-split = {
+    enable = true;
+    rawDir = "/home/goshva/3_Resources/Recordings/raw";
+    projectsDir = "/home/goshva/1_Projects";
   };
 
   xdg.userDirs = {
