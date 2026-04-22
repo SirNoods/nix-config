@@ -10,6 +10,7 @@
   imports = [
     inputs.vicinae.homeManagerModules.default
     ./modules/obs-split.nix
+    ./modules/archive.nix
   ];
 
   home.username = "goshva";
@@ -40,6 +41,8 @@
     rawDir = "/home/goshva/3_Resources/Recordings/raw";
     projectsDir = "/home/goshva/1_Projects";
   };
+
+  programs.archive.enable = true;
 
   xdg.userDirs = {
     enable = true;
