@@ -103,6 +103,7 @@ in
     ];
     packages = with pkgs; [
       kdePackages.kate
+      kdePackages.kdenlive
     ];
   };
 
@@ -160,6 +161,7 @@ in
     satty
     vlc
     blender
+    audacity
   ];
 
   xdg.portal = {
