@@ -162,6 +162,7 @@ in
     vlc
     blender
     audacity
+    yt-dlp
   ];
 
   xdg.portal = {
