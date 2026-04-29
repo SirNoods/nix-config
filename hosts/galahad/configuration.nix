@@ -151,6 +151,7 @@ in
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     playerctl
     easyeffects
+    python3
     #firefox theming things
     pywalfox-native
     pywal
@@ -160,9 +161,12 @@ in
     wl-clipboard
     satty
     vlc
+    #editing
     blender
     audacity
     yt-dlp
+    python313Packages.faster-whisper
+    ffmpeg
   ];
 
   xdg.portal = {

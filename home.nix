@@ -10,6 +10,7 @@
   imports = [
     inputs.vicinae.homeManagerModules.default
     ./modules/obs-split.nix
+    ./modules/yt-tools.nix
     ./modules/archive.nix
   ];
 
@@ -41,6 +42,8 @@
     rawDir = "/home/goshva/3_Resources/Recordings/raw";
     projectsDir = "/home/goshva/1_Projects";
   };
+
+  programs.yt-tools.enable = true;
 
   programs.archive.enable = true;
 
