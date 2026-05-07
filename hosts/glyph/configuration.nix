@@ -131,6 +131,8 @@
     prismlauncher
     heroic
     bitwarden-desktop
+    wine
+    bottles
   ];
 
   fonts.packages = with pkgs; [
