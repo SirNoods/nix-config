@@ -105,6 +105,15 @@ window-rule {
     draw-border-with-background false
 }
 
+// Enable blur behind the Ghostty terminal.
+window-rule {
+    match app-id="^com\\.mitchellh\\.ghostty$"
+
+    background-effect {
+        blur true
+    }
+}
+
 // Settings that influence how windows are positioned and sized.
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Layout
