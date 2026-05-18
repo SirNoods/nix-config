@@ -167,6 +167,8 @@ in
     yt-dlp
     python313Packages.faster-whisper
     ffmpeg
+    deadlock-mod-manager
+    gamescope
   ];
 
   xdg.portal = {
