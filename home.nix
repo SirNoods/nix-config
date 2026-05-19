@@ -96,6 +96,7 @@
     shellAliases = {
       btw = "echo 'fix nixes this bitch'";
       nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
+      # RGRECEIVER
       rgs = ''
         xhost +local: >/dev/null 2>&1; podman run --rm -it \
         --userns=keep-id \
@@ -107,6 +108,24 @@
         -v "$HOME/.local/share/rgreceiver:/root" \
         --device /dev/dri \
         localhost/rgreceiver
+      '';
+      # in case it shits itself
+      rgs-safe = ''
+        xhost +local:
+        podman run -ti --rm \
+          -e DISPLAY \
+          -e LIBGL_ALWAYS_SOFTWARE=1 \
+          -e QT_XCB_GL_INTEGRATION=none \
+          -e QT_OPENGL=software \
+          -e MESA_LOADER_DRIVER_OVERRIDE=llvmpipe \
+          -e GALLIUM_DRIVER=llvmpipe \
+          --net=host \
+          localhost/rgreceiver
+      '';
+      # and if the display state is shite, then after do rgs
+      rgs-reset = ''
+        mv "$HOME/.local/share/rgreceiver" "$HOME/.local/share/rgreceiver.bak.$(date +%Y%m%d-%H%M%S)"
+        mkdir -p "$HOME/.local/share/rgreceiver"
       '';
     };
   };
