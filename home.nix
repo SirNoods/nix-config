@@ -12,6 +12,7 @@
     ./modules/obs-split.nix
     ./modules/yt-tools.nix
     ./modules/archive.nix
+    ./modules/mic-reverb-toggle.nix
   ];
 
   home.username = "goshva";
@@ -36,6 +37,7 @@
     enable = true;
     preset = "headsetmic";
   };
+  goshva.micReverbToggle.enable = true;
 
   programs.obs-split = {
     enable = true;
@@ -46,6 +48,8 @@
   programs.yt-tools.enable = true;
 
   programs.archive.enable = true;
+
+  
 
   xdg.userDirs = {
     enable = true;
