@@ -167,6 +167,8 @@ in
     yt-dlp
     python313Packages.faster-whisper
     ffmpeg
+    blockbench
+    #gaming
     deadlock-mod-manager
     gamescope
   ];
