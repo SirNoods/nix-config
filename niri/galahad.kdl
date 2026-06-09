@@ -94,12 +94,6 @@ output "DP-3" {
     mode "2560x1440@75"
 }
 
-// layer rule for niri+noctalia overview wallpaper
-layer-rule {
-    match namespace="^noctalia-wallpaper*"
-    place-within-backdrop true
-}
-
 // disables the focus ring and borders being drawn as solid rectangles
 window-rule {
     draw-border-with-background false
@@ -276,8 +270,8 @@ layout {
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-// This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-at-startup "noctalia-shell"
+// This line starts DMS, because it's cool.
+spawn-at-startup "dms" "run"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -641,5 +635,5 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 }
 
-include "./noctalia.kdl"
-
+include "dms/cursor.kdl"
+include "./dms/colors.kdl"

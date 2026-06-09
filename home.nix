@@ -9,6 +9,7 @@
 {
   imports = [
     inputs.vicinae.homeManagerModules.default
+    inputs.dms.homeModules.dank-material-shell
     ./modules/obs-split.nix
     ./modules/yt-tools.nix
     ./modules/archive.nix
@@ -19,9 +20,7 @@
   home.homeDirectory = "/home/goshva";
   home.stateVersion = "25.11";
 
-  # Install Noctalia (only use if the programs.noctalia is commented out)
   home.packages = [
-    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
     pkgs.nautilus
   ];
 
@@ -30,8 +29,6 @@
 
   home.file.".config/ghostty/config.ghostty".source =
     config.lib.file.mkOutOfStoreSymlink "/home/goshva/nix-config/ghostty/config.ghostty";
-
-  # Paraing up my xdg user directories
 
   services.easyeffects = {
     enable = true;
@@ -49,8 +46,7 @@
 
   programs.archive.enable = true;
 
-  
-
+  # Paraing up my xdg user directories
   xdg.userDirs = {
     enable = true;
     createDirectories = true;
@@ -73,6 +69,9 @@
     name = "Adwaita";
     size = 12;
   };
+
+  # Time for DMS
+  programs.dank-material-shell.enable = true;
 
   # Vicinae, Hoorae
   services.vicinae = {
