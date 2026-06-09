@@ -169,7 +169,6 @@ in
     blender
     audacity
     yt-dlp
-    python313Packages.faster-whisper
     ffmpeg
     blockbench
     #gaming
