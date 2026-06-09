@@ -131,8 +131,7 @@
     prismlauncher
     heroic
     bitwarden-desktop
-    wine
-    bottles
+    teamviewer
   ];
 
   fonts.packages = with pkgs; [
