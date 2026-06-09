@@ -9,7 +9,11 @@
   ...
 }:
 let
+  system = pkgs.stdenv.hostPlatform.system;
+
   mesa25Pkgs = inputs.nixpkgs-mesa25.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+
+  stablePkgs = inputs.nixpkgs-stable.legacyPackages.${system};
 in
 {
   imports = [
@@ -171,6 +175,10 @@ in
     #gaming
     deadlock-mod-manager
     gamescope
+    #winy shit
+    wine
+    stablePkgs.bottles
+    flatpak
   ];
 
   xdg.portal = {
