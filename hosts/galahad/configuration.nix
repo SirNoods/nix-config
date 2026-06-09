@@ -149,7 +149,6 @@ in
     chafa
     fastfetch
     fuzzel
-    obs-studio
     spotify
     unzip
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -183,6 +182,12 @@ in
   xdg.portal = {
     enable = true;
     wlr.enable = true;
+
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gnome
+    ];
   };
 
   fonts.packages = with pkgs; [
@@ -199,6 +204,13 @@ in
 
     package = mesa25Pkgs.mesa;
     package32 = mesa25Pkgs.pkgsi686Linux.mesa;
+  };
+
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+    ];
   };
 
   # Some programs need SUID wrappers, can be configured further or are
