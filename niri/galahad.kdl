@@ -24,6 +24,9 @@ input {
         // Enable numlock on startup, omitting this setting disables it.
         numlock
     }
+    tablet {
+        map-to-output "Dp-3"
+    }
 
     // Next sections include libinput settings.
     // Omitting settings disables them, or leaves them at their default values.
