@@ -47,11 +47,10 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = [
       (pkgs.writeShellScriptBin "obs-split" ''
-        #!${pkgs.bash}/bin/bash
         set -euo pipefail
 
-        RAW_DIR="${cfg.rawDir}"
-        PROJECTS_DIR="${cfg.projectsDir}"
+        RAW_DIR=${lib.escapeShellArg cfg.rawDir}
+        PROJECTS_DIR=${lib.escapeShellArg cfg.projectsDir}
 
         PROJECT="''${1:-}"
         MODE="''${2:-}"
@@ -71,33 +70,90 @@ in
         get_latest_files() {
           local count="$1"
 
-          ${pkgs.findutils}/bin/find "$RAW_DIR" -maxdepth 1 -type f -name '*.mkv' -printf '%T@ %p\n' \
+          ${pkgs.findutils}/bin/find "$RAW_DIR" \
+            -maxdepth 1 \
+            -type f \
+            -name '*.mkv' \
+            -printf '%T@ %p\n' \
             | ${pkgs.coreutils}/bin/sort -n \
             | ${pkgs.coreutils}/bin/tail -n "$count" \
             | ${pkgs.gawk}/bin/awk '{ $1=""; sub(/^ /, ""); print }'
         }
 
+        get_next_index() {
+          local highest=0
+          local file
+          local filename
+          local number
+
+          shopt -s nullglob
+
+          for file in \
+            "$OUT_DIR/${cfg.videoName}_"* \
+            "$OUT_DIR/${cfg.micName}_"* \
+            "$OUT_DIR/${cfg.gameName}_"*
+          do
+            filename="''${file##*/}"
+
+            if [[ "$filename" =~ _([0-9]+)\.[^.]+$ ]]; then
+              number="''${BASH_REMATCH[1]}"
+              number=$((10#$number))
+
+              if (( number > highest )); then
+                highest="$number"
+              fi
+            fi
+          done
+
+          shopt -u nullglob
+
+          echo $((highest + 1))
+        }
+
         process_file() {
           local input="$1"
-          local suffix="$2"
+          local index="$2"
+          local suffix
+          local ext
+          local video_out
+          local mic_out
+          local game_out
 
           if [ -z "''${input:-}" ] || [ ! -f "$input" ]; then
             echo "Input file not found: $input"
             exit 1
           fi
 
-          local ext="''${input##*.}"
+          suffix="_$(${pkgs.coreutils}/bin/printf '%02d' "$index")"
+          ext="''${input##*.}"
 
-          local video_out="$OUT_DIR/${cfg.videoName}''${suffix}.''${ext}"
-          local mic_out="$OUT_DIR/${cfg.micName}''${suffix}.wav"
-          local game_out="$OUT_DIR/${cfg.gameName}''${suffix}.wav"
+          video_out="$OUT_DIR/${cfg.videoName}''${suffix}.''${ext}"
+          mic_out="$OUT_DIR/${cfg.micName}''${suffix}.wav"
+          game_out="$OUT_DIR/${cfg.gameName}''${suffix}.wav"
 
           echo "Processing: $input"
+          echo "Sequence:   $index"
 
-          ${pkgs.ffmpeg}/bin/ffmpeg -y -i "$input" \
-            -map 0:v:0 -c:v copy "$video_out" \
-            -map 0:a:1 -af ${lib.escapeShellArg (if cfg.normalizeMic then "loudnorm=I=-16:TP=-1.5:LRA=11" else "anull")} -c:a pcm_s16le "$mic_out" \
-            -map 0:a:2 -c:a pcm_s16le "$game_out"
+          ${pkgs.ffmpeg}/bin/ffmpeg \
+            -n \
+            -i "$input" \
+            -map 0:v:0 \
+            -c:v copy \
+            "$video_out" \
+            -map 0:a:1 \
+            -af ${
+              lib.escapeShellArg (
+                if cfg.normalizeMic then
+                  "loudnorm=I=-16:TP=-1.5:LRA=11"
+                else
+                  "anull"
+              )
+            } \
+            -c:a pcm_s16le \
+            "$mic_out" \
+            -map 0:a:2 \
+            -c:a pcm_s16le \
+            "$game_out"
 
           echo "Done:"
           echo "  $video_out"
@@ -107,10 +163,12 @@ in
 
         echo "Output: $OUT_DIR"
 
+        NEXT_INDEX="$(get_next_index)"
+
         if [ "$MODE" = "--last" ]; then
           COUNT="''${VALUE:-5}"
 
-          if ! [[ "$COUNT" =~ ^[0-9]+$ ]]; then
+          if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
             echo "Invalid count: $COUNT"
             exit 1
           fi
@@ -122,11 +180,11 @@ in
             exit 1
           fi
 
-          i=1
+          index="$NEXT_INDEX"
+
           for input in "''${INPUTS[@]}"; do
-            suffix="_$(${pkgs.coreutils}/bin/printf "%02d" "$i")"
-            process_file "$input" "$suffix"
-            i=$((i + 1))
+            process_file "$input" "$index"
+            index=$((index + 1))
           done
         else
           INPUT="$MODE"
@@ -137,7 +195,7 @@ in
             INPUT="$RAW_DIR/$INPUT"
           fi
 
-          process_file "$INPUT" ""
+          process_file "$INPUT" "$NEXT_INDEX"
         fi
       '')
     ];
