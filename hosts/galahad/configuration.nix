@@ -193,6 +193,23 @@ in
     ];
   };
 
+   # Memory / swap
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
+
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 16 * 1024; # 16 GB
+    }
+  ];
+
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 10;
+  };
+
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
   ];
