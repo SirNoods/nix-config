@@ -170,6 +170,7 @@ in
     yt-dlp
     ffmpeg
     blockbench
+    imagemagick
     #gaming
     deadlock-mod-manager
     gamescope
@@ -212,6 +213,7 @@ in
     enable = true;
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs
+      obs-multi-rtmp
     ];
   };
   programs.streamdeck-ui.enable = true;
