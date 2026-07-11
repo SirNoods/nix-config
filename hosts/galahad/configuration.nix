@@ -27,6 +27,7 @@ in
     ../../modules/profiles/editing.nix
     ../../modules/profiles/gaming.nix
     ../../modules/profiles/streaming.nix
+    ../../modules/profiles/workstation.nix
     ../../modules/profiles/windows-apps.nix
 
     ../../modules/rgs.nix
@@ -105,24 +106,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vscodium
     netbird
-    jellyfin-desktop
-    discord
-    #temp
-    vesktop
-    obsidian
-    bitwarden-desktop
-    chafa
-    fastfetch
-    spotify
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-    easyeffects
-    #firefox theming things
-    pywalfox-native
-    pywal
-    #screenshot area
-    vlc
   ];
 
   # Memory / swap
