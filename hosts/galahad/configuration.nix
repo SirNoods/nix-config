@@ -12,8 +12,6 @@ let
   system = pkgs.stdenv.hostPlatform.system;
 
   mesa25Pkgs = inputs.nixpkgs-mesa25.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-
-  stablePkgs = inputs.nixpkgs-stable.legacyPackages.${system};
 in
 {
   imports = [
@@ -29,6 +27,7 @@ in
     ../../modules/profiles/editing.nix
     ../../modules/profiles/gaming.nix
     ../../modules/profiles/streaming.nix
+    ../../modules/profiles/windows-apps.nix
 
     ../../modules/rgs.nix
   ];
@@ -124,10 +123,6 @@ in
     pywal
     #screenshot area
     vlc
-    #winy shit
-    wine
-    stablePkgs.bottles
-    flatpak
   ];
 
   # Memory / swap
