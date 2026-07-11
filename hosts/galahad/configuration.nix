@@ -19,7 +19,7 @@ in
   imports = [
     ./hardware-configuration.nix
 
-    ./../modules/base.nix
+    ../../modules/base.nix
 
     ../../modules/rgs.nix
     ../../modules/steam.nix
