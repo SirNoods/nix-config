@@ -1,6 +1,7 @@
 # Host template
 
-This directory is a starting point for new NixOS hosts.
+Just so you nutcase remember;
+This directory is my starting point for new NixOS hosts.
 
 Copy `configuration.nix` into a new directory under `hosts/`, then:
 

@@ -12,10 +12,11 @@ in
     ./hardware-configuration.nix
     ../../modules/hardware/zram.nix
 
+    # Base
     ../../modules/base.nix
 
+    # Desktop & DisplayManager
     ../../modules/desktop
-
     ../../modules/greeter/sddm.nix
 
     # Profiles

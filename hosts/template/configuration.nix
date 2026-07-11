@@ -2,14 +2,14 @@
 
 {
   imports = [
-    # Replace this with the machine's generated hardware configuration.
+    # Hardware
     ./hardware-configuration.nix
+    # ../../modules/hardware/zram.nix
 
-    # Shared system configuration
+    # Base
     ../../modules/base.nix
 
-    # Add the modules needed by this machine.
-    # ../../modules/hardware/zram.nix
+    # Desktop & DisplayManager
     # ../../modules/desktop
     # ../../modules/greeter/sddm.nix
 
@@ -24,7 +24,7 @@
     # ../../modules/services/netbird.nix
     # ../../modules/services/ssh.nix
 
-    # Custom tools
+    # Tools
     # ../../modules/rgs.nix
   ];
 
