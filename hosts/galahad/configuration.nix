@@ -25,6 +25,9 @@ in
 
     ../../modules/greeter/sddm.nix
 
+    # Profiles
+    ../../modules/profiles/editing.nix
+
     ../../modules/rgs.nix
     ../../modules/steam.nix
   ];
@@ -86,7 +89,6 @@ in
     ];
     packages = with pkgs; [
       kdePackages.kate
-      kdePackages.kdenlive
     ];
   };
 
@@ -123,13 +125,7 @@ in
     pywal
     #screenshot area
     vlc
-    #editing
-    blender
-    audacity
-    yt-dlp
-    ffmpeg
-    blockbench
-    imagemagick
+
     #gaming
     deadlock-mod-manager
     gamescope
