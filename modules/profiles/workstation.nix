@@ -20,5 +20,6 @@
     pywalfox-native
     pywal
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    kdePackages.kate
   ];
 }
