@@ -27,9 +27,9 @@ in
 
     # Profiles
     ../../modules/profiles/editing.nix
+    ../../modules/profiles/gaming.nix
 
     ../../modules/rgs.nix
-    ../../modules/steam.nix
   ];
 
   # Bootloader.
@@ -112,8 +112,6 @@ in
     #temp
     vesktop
     obsidian
-    prismlauncher
-    heroic
     bitwarden-desktop
     chafa
     fastfetch
@@ -125,10 +123,6 @@ in
     pywal
     #screenshot area
     vlc
-
-    #gaming
-    deadlock-mod-manager
-    gamescope
     #winy shit
     wine
     stablePkgs.bottles
