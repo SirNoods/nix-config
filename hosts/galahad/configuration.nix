@@ -18,6 +18,9 @@ in
 {
   imports = [
     ./hardware-configuration.nix
+
+    ./../modules/base.nix
+
     ../../modules/rgs.nix
     ../../modules/steam.nix
   ];
@@ -138,16 +141,8 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    wget
     ghostty
     vscodium
-    nixfmt
-    git
-    tldr
-    tree
-    bat
-    btop
-    openssh
     alacritty
     libnotify
     xwayland-satellite
@@ -164,11 +159,9 @@ in
     fastfetch
     fuzzel
     spotify
-    unzip
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     playerctl
     easyeffects
-    python3
     #firefox theming things
     pywalfox-native
     pywal
@@ -207,7 +200,7 @@ in
     ];
   };
 
-   # Memory / swap
+  # Memory / swap
   zramSwap = {
     enable = true;
     memoryPercent = 50;
@@ -231,7 +224,7 @@ in
   services.gvfs.enable = true;
 
   services.netbird.enable = true;
-  
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -277,9 +270,9 @@ in
   #mounting the hdd
   # 6109c55d-cf54-47b1-bca9-4ee175dffbd8
   fileSystems."/mnt/hdd" = {
-  device = "/dev/disk/by-uuid/6109c55d-cf54-47b1-bca9-4ee175dffbd8";
-  fsType = "ext4";
-};
+    device = "/dev/disk/by-uuid/6109c55d-cf54-47b1-bca9-4ee175dffbd8";
+    fsType = "ext4";
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
