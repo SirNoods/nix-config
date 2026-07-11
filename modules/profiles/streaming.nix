@@ -1,12 +1,6 @@
 { pkgs, ... }:
 
 {
-  imports = [
-    ../scripts/obs-split.nix
-    ../scripts/mic-reverb-toggle.nix
-    ../scripts/yt-tools.nix
-  ];
-
   environment.systemPackages = with pkgs; [
     obs-cmd
   ];
