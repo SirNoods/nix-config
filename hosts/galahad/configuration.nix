@@ -21,6 +21,8 @@ in
 
     ../../modules/base.nix
 
+    ../../modules/desktop
+
     ../../modules/rgs.nix
     ../../modules/steam.nix
   ];
@@ -29,21 +31,7 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "galahad"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Enable networking and noctalia things
-  networking.networkmanager = {
-    enable = true;
-    plugins = with pkgs; [
-      networkmanager-openvpn
-    ];
-  };
-  hardware.bluetooth.enable = true;
-  services.power-profiles-daemon.enable = true;
-  services.upower.enable = true;
-  #for vpns
-  programs.nm-applet.enable = true;
+  networking.hostName = "galahad";
 
   # Enable Flakes
   nix.settings.experimental-features = [
@@ -83,25 +71,6 @@ in
   # Configure console keymap
   console.keyMap = "de";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
@@ -119,14 +88,8 @@ in
     ];
   };
 
-  # NIRI
-  programs.niri.enable = true;
   #GREETER DEBUG BS
-  services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
-  services.displayManager.defaultSession = "niri";
-  # Install firefox.
-  programs.firefox.enable = true;
 
   # Allow unfree packages
   #nixpkgs.config.allowUnfree = true;
@@ -141,11 +104,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    ghostty
     vscodium
-    alacritty
-    libnotify
-    xwayland-satellite
     netbird
     jellyfin-desktop
     discord
@@ -157,19 +116,13 @@ in
     bitwarden-desktop
     chafa
     fastfetch
-    fuzzel
     spotify
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-    playerctl
     easyeffects
     #firefox theming things
     pywalfox-native
     pywal
     #screenshot area
-    grim
-    slurp
-    wl-clipboard
-    satty
     vlc
     #editing
     blender
@@ -188,17 +141,6 @@ in
     #streaming
     obs-cmd
   ];
-
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-gtk
-      xdg-desktop-portal-wlr
-      xdg-desktop-portal-gnome
-    ];
-  };
 
   # Memory / swap
   zramSwap = {
@@ -220,8 +162,6 @@ in
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
   ];
-
-  services.gvfs.enable = true;
 
   services.netbird.enable = true;
 
