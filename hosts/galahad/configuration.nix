@@ -28,6 +28,7 @@ in
     # Profiles
     ../../modules/profiles/editing.nix
     ../../modules/profiles/gaming.nix
+    ../../modules/profiles/streaming.nix
 
     ../../modules/rgs.nix
   ];
@@ -127,8 +128,6 @@ in
     wine
     stablePkgs.bottles
     flatpak
-    #streaming
-    obs-cmd
   ];
 
   # Memory / swap
@@ -162,14 +161,6 @@ in
     package32 = mesa25Pkgs.pkgsi686Linux.mesa;
   };
 
-  programs.obs-studio = {
-    enable = true;
-    plugins = with pkgs.obs-studio-plugins; [
-      wlrobs
-      obs-multi-rtmp
-    ];
-  };
-  programs.streamdeck-ui.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

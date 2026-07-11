@@ -10,10 +10,10 @@
   imports = [
     inputs.vicinae.homeManagerModules.default
     inputs.dms.homeModules.dank-material-shell
-    ./modules/obs-split.nix
-    ./modules/yt-tools.nix
-    ./modules/archive.nix
-    ./modules/mic-reverb-toggle.nix
+    ./modules/scripts/obs-split.nix
+    ./modules/scripts/yt-tools.nix
+    ./modules/scripts/archive.nix
+    ./modules/scripts/mic-reverb-toggle.nix
   ];
 
   home.username = "goshva";
