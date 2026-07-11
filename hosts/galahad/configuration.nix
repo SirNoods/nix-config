@@ -23,6 +23,8 @@ in
 
     ../../modules/desktop
 
+    ../../modules/greeter/sddm.nix
+
     ../../modules/rgs.nix
     ../../modules/steam.nix
   ];
@@ -87,9 +89,6 @@ in
       kdePackages.kdenlive
     ];
   };
-
-  #GREETER DEBUG BS
-  services.displayManager.sddm.enable = true;
 
   # Allow unfree packages
   #nixpkgs.config.allowUnfree = true;
