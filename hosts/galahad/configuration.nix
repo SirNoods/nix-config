@@ -30,6 +30,10 @@ in
     ../../modules/profiles/workstation.nix
     ../../modules/profiles/windows-apps.nix
 
+    # Services
+    ../../modules/services/netbird.nix
+    ../../modules/services/ssh.nix
+
     ../../modules/rgs.nix
   ];
 
@@ -106,7 +110,7 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    netbird
+
   ];
 
   # Memory / swap
@@ -130,8 +134,6 @@ in
     nerd-fonts.jetbrains-mono
   ];
 
-  services.netbird.enable = true;
-
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -150,8 +152,6 @@ in
 
   # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
   # programs.ssh.startAgent = true;
 
   # Open ports in the firewall.
