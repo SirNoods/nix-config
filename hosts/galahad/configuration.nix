@@ -142,6 +142,8 @@ in
     netbird
     jellyfin-desktop
     discord
+    #temp
+    vesktop
     obsidian
     prismlauncher
     heroic
