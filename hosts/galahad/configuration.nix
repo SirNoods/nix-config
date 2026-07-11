@@ -48,6 +48,11 @@ in
     "flakes"
   ];
 
+  nix.settings.trusted-users = [
+    "root"
+    "goshva"
+  ];
+
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
@@ -121,7 +126,14 @@ in
   programs.firefox.enable = true;
 
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  #nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+
+    permittedInsecurePackages = [
+      "electron-39.8.10"
+    ];
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

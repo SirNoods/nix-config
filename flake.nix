@@ -26,7 +26,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    vicinae.url = "github:vicinaehq/vicinae";
+    vicinae.url = "github:vicinaehq/vicinae/267669eb55f1d03e5a34bc8cd4fc146b4eb82120";
 
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
