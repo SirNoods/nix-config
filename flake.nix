@@ -95,7 +95,7 @@
       nixosConfigurations.bedivere = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/glyph/configuration.nix
+          ./hosts/bedivere/configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
