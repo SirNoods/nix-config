@@ -60,38 +60,6 @@
           }
         ];
       };
-      nixosConfigurations.gasket = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/gasket/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.goshva = import ./home.nix;
-              backupFileExtension = "backup";
-              extraSpecialArgs = { inherit inputs; };
-            };
-          }
-        ];
-      };
-      nixosConfigurations.glyph = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/glyph/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.goshva = import ./home.nix;
-              backupFileExtension = "backup";
-              extraSpecialArgs = { inherit inputs; };
-            };
-          }
-        ];
-      };
       nixosConfigurations.bedivere = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
