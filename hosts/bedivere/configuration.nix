@@ -23,9 +23,9 @@
 
   networking.hostName = "bedivere";
 
-  # Configure the bootloader per machine.
-  # boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.canTouchEfiVariables = true;
+  # Bootloader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   # Keep this at the release used for the machine's original installation.
   system.stateVersion = "25.11";
