@@ -22,6 +22,6 @@
   services.gvfs.enable = true;
   services.printing.enable = true;
 
-  programs.nm-applet.enable = true;
+  #programs.nm-applet.enable = true;
   programs.firefox.enable = true;
 }
