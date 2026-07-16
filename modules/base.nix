@@ -54,6 +54,9 @@
     ];
   };
 
+  programs.zsh.enable = true;
+  users.users.goshva.shell = pkgs.zsh;
+
   environment.systemPackages = with pkgs; [
     wget
     nixfmt
