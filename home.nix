@@ -96,8 +96,49 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
+    autosuggestion = {
+      enable = true;
+      highlight = "fg=8";
+    };
+
+    syntaxHighlighting = {
+      enable = true;
+
+      styles = {
+        command = "fg=green,bold";
+        builtin = "fg=cyan";
+        alias = "fg=cyan";
+        function = "fg=blue";
+        path = "fg=magenta";
+        path_prefix = "fg=magenta";
+        globbing = "fg=yellow";
+        single-hyphen-option = "fg=yellow";
+        double-hyphen-option = "fg=yellow";
+        single-quoted-argument = "fg=cyan";
+        double-quoted-argument = "fg=cyan";
+        unknown-token = "fg=red,bold";
+        reserved-word = "fg=yellow";
+        comment = "fg=8";
+      };
+    };
+
+    history = {
+      size = 10000;
+      save = 10000;
+      path = "${config.xdg.dataHome}/zsh/history";
+
+      ignoreDups = true;
+      ignoreSpace = true;
+      share = true;
+      extended = true;
+    };
+
+    autocd = true;
+
+    initContent = ''
+    PROMPT='%B%n@%m%b:%~ > '
+    '';
+
     shellAliases = {
       btw = "echo 'fix nixes this bitch'";
       nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
