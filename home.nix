@@ -93,6 +93,24 @@
     settings.user.email = "goshva@goshva.cool";
   };
 
+  home.activation.linkZenDmsTheme = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    profile_dir="$HOME/.config/zen/yr49dwti.Default Profile"
+    chrome_dir="$profile_dir/chrome"
+    dms_theme="$HOME/.config/DankMaterialShell/zen.css"
+
+    if [ -d "$profile_dir" ]; then
+      mkdir -p "$chrome_dir"
+
+      if [ -e "$dms_theme" ]; then
+        ln -sfn "$dms_theme" "$chrome_dir/userChrome.css"
+      else
+        echo "DMS Zen theme not found at $dms_theme"
+      fi
+    else
+      echo "Zen profile not found at $profile_dir"
+    fi
+  '';
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -136,7 +154,7 @@
     autocd = true;
 
     initContent = ''
-    PROMPT='%B%n@%m%b:%~ > '
+      PROMPT='%B%n@%m%b:%~ > '
     '';
 
     shellAliases = {
