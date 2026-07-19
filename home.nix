@@ -199,7 +199,7 @@
     enable = true;
     enableCompletion = true;
     shellAliases = {
-      btw = "echo 'fix nixes this bitch'";
+      btw = "echo 'nix fixes this'";
       nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
       # RGRECEIVER
       rgs = ''
