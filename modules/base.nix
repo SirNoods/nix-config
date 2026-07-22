@@ -68,6 +68,7 @@
     openssh
     unzip
     python3
+    gdu
   ];
 
   fonts.packages = with pkgs; [
