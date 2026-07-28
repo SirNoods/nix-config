@@ -3,6 +3,7 @@
 {
   environment.systemPackages = with pkgs; [
     obs-cmd
+    mpv
   ];
 
   programs.obs-studio = {
@@ -11,7 +12,6 @@
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs
       obs-multi-rtmp
-      mpv
     ];
   };
 
