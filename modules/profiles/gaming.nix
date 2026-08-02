@@ -9,6 +9,7 @@
     prismlauncher
     heroic
     deadlock-mod-manager
+    r2modman
     gamescope
   ];
 }
