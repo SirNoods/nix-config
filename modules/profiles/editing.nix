@@ -8,5 +8,6 @@
     ffmpeg
     blockbench
     imagemagick
+    #davinci-resolve heavy build, commenting out until I wanna commit the time lol
   ];
 }
