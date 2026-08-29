@@ -69,6 +69,7 @@
     unzip
     python3
     gdu
+    fastfetch
   ];
 
   fonts.packages = with pkgs; [

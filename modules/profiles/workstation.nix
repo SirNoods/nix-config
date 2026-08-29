@@ -13,7 +13,7 @@
     obsidian
     bitwarden-desktop
     chafa
-    fastfetch
+    fetch
     spotify
     vlc
     easyeffects
