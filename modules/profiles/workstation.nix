@@ -13,7 +13,6 @@
     obsidian
     bitwarden-desktop
     chafa
-    fetch
     spotify
     vlc
     easyeffects
@@ -21,5 +20,6 @@
     pywal
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
     kdePackages.kate
+    pkgs.fetch
   ];
 }
