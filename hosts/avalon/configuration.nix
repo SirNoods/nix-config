@@ -21,6 +21,10 @@
     fsType = "ext4";
   };
 
+  sops.defaultSopsFile = ../../secrets/avalon.yaml;
+  sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+  sops.secrets.protonvpn-wg = { };
+
   environment.shellAliases = {
     nrs = "sudo nixos-rebuild switch --flake . && echo 'Rebuild done'";
   };
