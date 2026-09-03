@@ -1,5 +1,5 @@
 {
-  description = "Goshva Goshva Goshva";
+  description = "Shva's Flake";
 
   nixConfig = {
     extra-substituters = [
@@ -74,6 +74,12 @@
               extraSpecialArgs = { inherit inputs; };
             };
           }
+        ];
+      };
+      nixosConfigurations.avalon = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/avalon/configuration.nix
         ];
       };
     };
