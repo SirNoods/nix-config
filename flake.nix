@@ -38,6 +38,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpgks.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -86,6 +91,7 @@
         modules = [
           ./hosts/avalon/configuration.nix
           inputs.vpn-confinement.nixosModules.default
+          inputs.sops-nix.nixosModules.sops
         ];
       };
     };
