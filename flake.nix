@@ -85,6 +85,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/avalon/configuration.nix
+          inputs.vpn-confinement.nixosModules.default
         ];
       };
     };
