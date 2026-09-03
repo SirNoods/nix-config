@@ -9,7 +9,7 @@
       ExecStart = ''
         ${pkgs.nodejs}/bin/node /home/goshva/foundry/resources/app/main.js \
           --dataPath=/home/goshva/foundrydata/FoundryVTT \
-          --host=0.0.0.0 --port=30000
+          --host=127.0.0.1 --port=30000
       '';
       User = "goshva";
       Restart = "on-failure";
