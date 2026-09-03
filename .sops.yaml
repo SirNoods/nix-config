@@ -1,0 +1,7 @@
+keys:
+  - &admin_josh age1fyz0apzpwhatcryg4qf8fz0ms8yzm0nx88tllz4qs7el5a47quws3p6sva
+creation_rules:
+  - path_regex: secrets/avalon\.yaml$
+    key_groups:
+      - age:
+          - *admin_josh
