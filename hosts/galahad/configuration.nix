@@ -53,6 +53,7 @@ in
 
     package = mesa25Pkgs.mesa;
     package32 = mesa25Pkgs.pkgsi686Linux.mesa;
+
   };
 
   networking.extraHosts = ''

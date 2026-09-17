@@ -1,5 +1,16 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
+let
+  resolvePkgs = import inputs.nixpkgs-resolve {
+    system = pkgs.stdenv.hostPlatform.system;
+    config.allowUnfree = true;
+  };
+
+  davinciWrapped = pkgs.writeShellScriptBin "davinci-resolve" ''
+    exec ${pkgs.xwayland-run}/bin/xwayland-run -- \
+      ${resolvePkgs.davinci-resolve}/bin/davinci-resolve "$@"
+  '';
+in
 {
   environment.systemPackages = with pkgs; [
     blender
@@ -8,6 +19,12 @@
     ffmpeg
     blockbench
     imagemagick
-    #davinci-resolve heavy build, commenting out until I wanna commit the time lol
+
+    davinciWrapped
+
+    clinfo
+    xwayland-run
   ];
+
+  hardware.amdgpu.opencl.enable = true;
 }
