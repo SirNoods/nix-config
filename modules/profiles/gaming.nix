@@ -11,5 +11,6 @@
     deadlock-mod-manager
     r2modman
     gamescope
+    packwiz
   ];
 }
