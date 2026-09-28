@@ -15,6 +15,8 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     #mesa rollback?
     nixpkgs-mesa25.url = "github:NixOS/nixpkgs/nixos-25.05";
+    # editing pin
+    nixpkgs-resolve.url = "github:NixOS/nixpkgs/2296dc841ee1af8b41ac39400f386962f7a7fb4c";
 
     home-manager = {
       url = "github:nix-community/home-manager";

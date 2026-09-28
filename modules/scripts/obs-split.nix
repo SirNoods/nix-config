@@ -5,7 +5,7 @@ let
 in
 {
   options.programs.obs-split = {
-    enable = lib.mkEnableOption "OBS track splitting helper for Blender workflows";
+    enable = lib.mkEnableOption "OBS track splitting helper for Blender/DaVinci workflows";
 
     rawDir = lib.mkOption {
       type = lib.types.str;
@@ -22,7 +22,7 @@ in
     videoName = lib.mkOption {
       type = lib.types.str;
       default = "video";
-      description = "Base name for the copied video file.";
+      description = "Base name for the copied/transcoded video file.";
     };
 
     micName = lib.mkOption {
@@ -42,6 +42,12 @@ in
       default = true;
       description = "Normalize mic audio using ffmpeg loudnorm.";
     };
+
+    davinciProfile = lib.mkOption {
+      type = lib.types.str;
+      default = "dnxhr_sq";
+      description = "DNxHR profile used for DaVinci Resolve intermediate video.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -53,16 +59,50 @@ in
         PROJECTS_DIR=${lib.escapeShellArg cfg.projectsDir}
 
         PROJECT="''${1:-}"
-        MODE="''${2:-}"
-        VALUE="''${3:-}"
+        shift || true
+
+        DAVINCI=false
+        MODE=""
+        VALUE=""
 
         if [ -z "$PROJECT" ]; then
           echo "Usage:"
           echo "  obs-split <project_name>"
           echo "  obs-split <project_name> <input_file>"
           echo "  obs-split <project_name> --last <count>"
+          echo ""
+          echo "DaVinci Resolve mode:"
+          echo "  obs-split <project_name> --davinci"
+          echo "  obs-split <project_name> --davinci <input_file>"
+          echo "  obs-split <project_name> --davinci --last <count>"
           exit 1
         fi
+
+        # Parse remaining arguments.
+        while [ "$#" -gt 0 ]; do
+          case "$1" in
+            --davinci)
+              DAVINCI=true
+              shift
+              ;;
+
+            --last)
+              MODE="--last"
+              VALUE="''${2:-5}"
+              shift 2
+              ;;
+
+            *)
+              if [ -n "$MODE" ]; then
+                echo "Unexpected argument: $1"
+                exit 1
+              fi
+
+              MODE="$1"
+              shift
+              ;;
+          esac
+        done
 
         OUT_DIR="$PROJECTS_DIR/$PROJECT"
         ${pkgs.coreutils}/bin/mkdir -p "$OUT_DIR"
@@ -127,33 +167,68 @@ in
           suffix="_$(${pkgs.coreutils}/bin/printf '%02d' "$index")"
           ext="''${input##*.}"
 
-          video_out="$OUT_DIR/${cfg.videoName}''${suffix}.''${ext}"
+          if [ "$DAVINCI" = true ]; then
+            video_out="$OUT_DIR/${cfg.videoName}''${suffix}.mov"
+          else
+            video_out="$OUT_DIR/${cfg.videoName}''${suffix}.''${ext}"
+          fi
+
           mic_out="$OUT_DIR/${cfg.micName}''${suffix}.wav"
           game_out="$OUT_DIR/${cfg.gameName}''${suffix}.wav"
 
           echo "Processing: $input"
           echo "Sequence:   $index"
 
-          ${pkgs.ffmpeg}/bin/ffmpeg \
-            -n \
-            -i "$input" \
-            -map 0:v:0 \
-            -c:v copy \
-            "$video_out" \
-            -map 0:a:1 \
-            -af ${
-              lib.escapeShellArg (
-                if cfg.normalizeMic then
-                  "loudnorm=I=-16:TP=-1.5:LRA=11"
-                else
-                  "anull"
-              )
-            } \
-            -c:a pcm_s16le \
-            "$mic_out" \
-            -map 0:a:2 \
-            -c:a pcm_s16le \
-            "$game_out"
+          if [ "$DAVINCI" = true ]; then
+            echo "Mode:       DaVinci Resolve"
+            echo "Video:      DNxHR SQ"
+
+            ${pkgs.ffmpeg}/bin/ffmpeg \
+              -n \
+              -i "$input" \
+              -map 0:v:0 \
+              -c:v dnxhd \
+              -profile:v ${lib.escapeShellArg cfg.davinciProfile} \
+              -pix_fmt yuv422p \
+              "$video_out" \
+              -map 0:a:1 \
+              -af ${
+                lib.escapeShellArg (
+                  if cfg.normalizeMic then
+                    "loudnorm=I=-16:TP=-1.5:LRA=11"
+                  else
+                    "anull"
+                )
+              } \
+              -c:a pcm_s16le \
+              "$mic_out" \
+              -map 0:a:2 \
+              -c:a pcm_s16le \
+              "$game_out"
+          else
+            echo "Mode:       Standard"
+
+            ${pkgs.ffmpeg}/bin/ffmpeg \
+              -n \
+              -i "$input" \
+              -map 0:v:0 \
+              -c:v copy \
+              "$video_out" \
+              -map 0:a:1 \
+              -af ${
+                lib.escapeShellArg (
+                  if cfg.normalizeMic then
+                    "loudnorm=I=-16:TP=-1.5:LRA=11"
+                  else
+                    "anull"
+                )
+              } \
+              -c:a pcm_s16le \
+              "$mic_out" \
+              -map 0:a:2 \
+              -c:a pcm_s16le \
+              "$game_out"
+          fi
 
           echo "Done:"
           echo "  $video_out"
