@@ -5,7 +5,6 @@
 
   services.sonarr.enable = true;
   services.radarr.enable = true;
-  services.bazarr.enable = true;
   services.prowlarr.enable = true;
   services.jellyseerr.enable = true;
   services.audiobookshelf.enable = true;
@@ -24,6 +23,12 @@
     enable = true;
     vpnNamespace = "proton";
   };
+
+  users.groups.arr-shared = {};
+  users.users.sonarr.extraGroups = [ "arr-shared" ];
+  users.users.radarr.extraGroups = [ "arr-shared" ];
+  users.users.sabnzbd.extraGroups = [ "arr-shared" ];
+  users.users.qbittorrent.extraGroups = [ "arr-shared" ];
 
   virtualisation.oci-containers.containers = {
     flaresolverr = {
