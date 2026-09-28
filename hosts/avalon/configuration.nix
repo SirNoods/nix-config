@@ -17,7 +17,11 @@
   networking.firewall.allowedTCPPorts = [
     80
     443
+    8090
+    8100
+    6881
   ];
+  networking.firewall.allowedUDPPorts = [ 6881 ];
 
   fileSystems."/mnt/storage" = {
     device = "/dev/disk/by-uuid/bc65f616-3756-4504-a382-d821ef9a50ab";
