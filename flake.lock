@@ -146,8 +146,30 @@
         "nixpkgs-mesa25": "nixpkgs-mesa25",
         "nixpkgs-resolve": "nixpkgs-resolve",
         "nixpkgs-stable": "nixpkgs-stable",
+        "sops-nix": "sops-nix",
         "vicinae": "vicinae",
+        "vpn-confinement": "vpn-confinement",
         "zen-browser": "zen-browser"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790498116,
+        "narHash": "sha256-rs9meAYxW3zzrh43yaW7htrqCD+X9+pupDPHN86fumI=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "5efb5a6f4f5ab192817d28557dd4d650fa14d866",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
       }
     },
     "systems": {
@@ -182,6 +204,21 @@
         "owner": "vicinaehq",
         "repo": "vicinae",
         "rev": "267669eb55f1d03e5a34bc8cd4fc146b4eb82120",
+        "type": "github"
+      }
+    },
+    "vpn-confinement": {
+      "locked": {
+        "lastModified": 1789394839,
+        "narHash": "sha256-trdjVJKmDBbzgbP8pd+R7iKbGkdRu0nmXgQlBR/hEiU=",
+        "owner": "Maroka-chan",
+        "repo": "VPN-Confinement",
+        "rev": "a21f66ccd9f644c3770ccdf287cb380c00192628",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Maroka-chan",
+        "repo": "VPN-Confinement",
         "type": "github"
       }
     },

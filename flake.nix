@@ -35,14 +35,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    vpn-confinement = {
-      url = "github:Maroka-chan/VPN-Confinement";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    vpn-confinement.url = "github:Maroka-chan/VPN-Confinement";
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
-      inputs.nixpgks.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
   };
