@@ -32,7 +32,7 @@
       environment.TZ = "Europe/Berlin";
     };
     homer = {
-      image = "b4bz/homer";
+      image = "docker.io/b4bz/homer:latest";
       ports = [ "8080:8080" ];
       volumes = [ "/opt/homer:/www/assets" ];
       environment.INIT_ASSETS = "1";
