@@ -1,13 +1,13 @@
 { ... }:
 let
   netbirdOnly = port: ''
-    @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48
+    @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48 192.168.178.0/24
     handle @netbird {
       reverse_proxy 127.0.0.1:${toString port}
     }
     respond "Forbidden" 403
   '';
-in
+  in
 {
   services.caddy = {
     enable = true;
