@@ -1,4 +1,5 @@
 { ... }:
+
 let
   netbirdOnly = port: ''
     @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48 192.168.178.0/24
@@ -7,7 +8,15 @@ let
     }
     respond "Forbidden" 403
   '';
-  in
+
+  netbirdOnlyVpnNs = port: ''
+    @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48 192.168.178.0/24
+    handle @netbird {
+      reverse_proxy 192.168.178.32:${toString port}
+    }
+    respond "Forbidden" 403
+  '';
+in
 {
   services.caddy = {
     enable = true;
@@ -25,10 +34,10 @@ let
       "homer.joshs.tech".extraConfig = netbirdOnly 8080;
       "jellyfin.joshs.tech".extraConfig = netbirdOnly 8096;
       "jellyseerr.joshs.tech".extraConfig = netbirdOnly 5055;
-      "qbittorrent.joshs.tech".extraConfig = netbirdOnly 8090;
+      "qbittorrent.joshs.tech".extraConfig = netbirdOnlyVpnNs 8090;
       "radarr.joshs.tech".extraConfig = netbirdOnly 7878;
       "sonarr.joshs.tech".extraConfig = netbirdOnly 8989;
-      "sabnzbd.joshs.tech".extraConfig = netbirdOnly 8100;
+      "sabnzbd.joshs.tech".extraConfig = netbirdOnlyVpnNs 8100;
       "prowlarr.joshs.tech".extraConfig = netbirdOnly 9696;
     };
   };
