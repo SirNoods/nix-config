@@ -9,10 +9,15 @@ let
     respond "Forbidden" 403
   '';
 
+  # For services confined to the proton VPN namespace: talk directly to the
+  # namespace's veth address (192.168.15.1) instead of 127.0.0.1 or the
+  # host's LAN IP. Locally-generated traffic from Caddy never traverses
+  # PREROUTING/DNAT, so the normal port-mapping trick doesn't apply here;
+  # going straight to the namespace's own subnet sidesteps that entirely.
   netbirdOnlyVpnNs = port: ''
     @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48 192.168.178.0/24
     handle @netbird {
-      reverse_proxy 192.168.178.32:${toString port}
+      reverse_proxy 192.168.15.1:${toString port}
     }
     respond "Forbidden" 403
   '';
@@ -37,7 +42,7 @@ in
       "qbittorrent.joshs.tech".extraConfig = netbirdOnlyVpnNs 8090;
       "radarr.joshs.tech".extraConfig = netbirdOnly 7878;
       "sonarr.joshs.tech".extraConfig = netbirdOnly 8989;
-      "sabnzbd.joshs.tech".extraConfig = netbirdOnlyVpnNs 8100;
+      "sabnzbd.joshs.tech".extraConfig = netbirdOnlyVpnNs 8080;
       "prowlarr.joshs.tech".extraConfig = netbirdOnly 9696;
     };
   };
