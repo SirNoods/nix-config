@@ -2,7 +2,7 @@
 
 let
   netbirdOnly = port: ''
-    @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48 192.168.178.0/24
+    @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48
     handle @netbird {
       reverse_proxy 127.0.0.1:${toString port}
     }
@@ -15,7 +15,7 @@ let
   # PREROUTING/DNAT, so the normal port-mapping trick doesn't apply here;
   # going straight to the namespace's own subnet sidesteps that entirely.
   netbirdOnlyVpnNs = port: ''
-    @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48 192.168.178.0/24
+    @netbird remote_ip 100.111.0.0/16 fd7a:115c:a1e0::/48
     handle @netbird {
       reverse_proxy 192.168.15.1:${toString port}
     }
