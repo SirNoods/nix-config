@@ -18,11 +18,11 @@
 
   systemd.services.sabnzbd.vpnConfinement = {
     enable = true;
-    vpnNamespace = "protonvpn";
+    vpnNamespace = "proton";
   };
   systemd.services.qbittorrent.vpnConfinement = {
     enable = true;
-    vpnNamespace = "protonvpn";
+    vpnNamespace = "proton";
   };
 
   virtualisation.oci-containers.containers = {
