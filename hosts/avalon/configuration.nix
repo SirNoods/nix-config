@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
@@ -32,25 +32,8 @@
     nrs = "sudo nixos-rebuild switch --flake . && echo 'Rebuild done'";
   };
 
-  programs.zsh = {
-    enableCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-    histSize = 10000;
-
-    setOptions = [
-      "INTERACTIVE_COMMENTS"
-      "AUTO_CD"
-      "HIST_IGNORE_DUPS"
-      "HIST_IGNORE_SPACE"
-      "SHARE_HISTORY"
-      "EXTENDED_HISTORY"
-    ];
-
-    promptInit = ''
-      PROMPT='%B%n@%m%b:%~ > '
-    '';
-  };
+  users.users.goshva.shell = lib.mkForce pkgs.bash;
+  environment.enableAllTerminfo = true;
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
