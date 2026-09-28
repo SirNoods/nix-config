@@ -3,7 +3,12 @@
   vpnNamespaces.proton = {
     enable = true;
     wireguardConfigFile = config.sops.secrets.protonvpn-wg.path; # see secrets note below
-    accessibleFrom = [ "127.0.0.1" "100.111.0.0/16" "fd7a:115c:a1e0::/48" ];
+    accessibleFrom = [
+    "127.0.0.1"
+    "100.111.0.0/16"
+    "fd7a:115c:a1e0::/48"
+    "192.168.178.0/24"
+    ];
     portMappings = [
       { from = 8090; to = 8090; } # qbittorrent webui
       { from = 8100; to = 8080; } # sabnzbd webui
