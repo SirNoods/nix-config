@@ -78,7 +78,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.goshva = { imports = [ ./home.nix ./home/bedivere.nix ]; };
+              users.goshva = { imports = [ ./home.nix ./modules/home/bedivere.nix ]; };
               backupFileExtension = "backup";
               extraSpecialArgs = { inherit inputs; };
             };
