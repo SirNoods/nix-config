@@ -106,9 +106,9 @@ input {
     position x=1280 y=0
 }
 
-// layer rule for niri+noctalia overview wallpaper
+// Show the swww wallpaper behind the overview
 layer-rule {
-    match namespace="^noctalia-wallpaper*"
+    match namespace="^swww-daemon"
     place-within-backdrop true
 }
 
@@ -280,7 +280,7 @@ layout {
 // See the binds section below for more spawn examples.
 
 // This line starts DMS
-spawn-at-startup "dms" "run"
+// spawn-at-startup "dms" "run"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -376,7 +376,7 @@ binds {
     // CUSTOM KEYBINDS
     // -------------------------------------------------
     Mod+space { spawn "vicinae" "toggle"; }
-
+    Mod+Shift+W { spawn "wallpaper" "-r"; }
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
@@ -640,5 +640,6 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 }
 
-include "dms/cursor.kdl"
-include "./dms/colors.kdl"
+// include "dms/cursor.kdl"
+// include "./dms/colors.kdl"
+include "./matugen/colors.kdl"
