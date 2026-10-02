@@ -17,6 +17,8 @@
   networking.firewall.allowedTCPPorts = [
     80
     443
+    8096
+    5055
   ];
   
   fileSystems."/mnt/storage" = {

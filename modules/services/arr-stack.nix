@@ -29,6 +29,7 @@
   users.users.radarr.extraGroups = [ "arr-shared" ];
   users.users.sabnzbd.extraGroups = [ "arr-shared" ];
   users.users.qbittorrent.extraGroups = [ "arr-shared" ];
+  users.users.jellyfin.extraGroups = [ "video" "render" "arr-shared" ];
 
   virtualisation.oci-containers.containers = {
     flaresolverr = {

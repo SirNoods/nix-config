@@ -57,6 +57,7 @@ in
   };
 
   networking.extraHosts = ''
+    192.168.178.32 avalon
     192.168.178.32 goblin
     192.168.178.32 caithawiki.joshs.tech
     192.168.178.32 foundry.joshs.tech
