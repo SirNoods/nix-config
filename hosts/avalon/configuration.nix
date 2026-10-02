@@ -20,10 +20,19 @@
     8096
     5055
   ];
-  
+
   fileSystems."/mnt/storage" = {
     device = "/dev/disk/by-uuid/bc65f616-3756-4504-a382-d821ef9a50ab";
     fsType = "ext4";
+  };
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      vaapiIntel
+      libvdpau-va-gl
+    ];
   };
 
   sops.defaultSopsFile = ../../secrets/avalon.yaml;
