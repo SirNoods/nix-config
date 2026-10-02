@@ -1,7 +1,6 @@
 { pkgs, ... }:
 {
   services.jellyfin.enable = true;
-  users.users.jellyfin.extraGroups = [ "video" "render" ];
 
   services.sonarr.enable = true;
   services.radarr.enable = true;
