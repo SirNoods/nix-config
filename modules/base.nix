@@ -54,8 +54,8 @@
     ];
   };
 
-  programs.zsh.enable = true;
-  users.users.goshva.shell = pkgs.zsh;
+  programs.bash.completion.enable = true;
+  users.users.goshva.shell = pkgs.bash;
 
   environment.systemPackages = with pkgs; [
     wget

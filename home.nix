@@ -114,93 +114,13 @@
     ''
   );
 
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion = {
-      enable = true;
-      highlight = "fg=8";
-    };
-
-    syntaxHighlighting = {
-      enable = true;
-
-      styles = {
-        command = "fg=green,bold";
-        builtin = "fg=cyan";
-        alias = "fg=cyan";
-        function = "fg=blue";
-        path = "fg=magenta";
-        path_prefix = "fg=magenta";
-        globbing = "fg=yellow";
-        single-hyphen-option = "fg=yellow";
-        double-hyphen-option = "fg=yellow";
-        single-quoted-argument = "fg=cyan";
-        double-quoted-argument = "fg=cyan";
-        unknown-token = "fg=red,bold";
-        reserved-word = "fg=yellow";
-        comment = "fg=8";
-      };
-    };
-
-    history = {
-      size = 10000;
-      save = 10000;
-      path = "${config.xdg.dataHome}/zsh/history";
-
-      ignoreDups = true;
-      ignoreSpace = true;
-      share = true;
-      extended = true;
-    };
-
-    autocd = true;
-
-    initContent = ''
-      PROMPT='%B%n@%m%b:%~ > '
-    '';
-
-    shellAliases = {
-      btw = "echo 'fix nixes this bitch'";
-      nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
-      # RGRECEIVER
-      rgs = ''
-        xhost +local: >/dev/null 2>&1; podman run --rm -it \
-        --userns=keep-id \
-        --group-add keep-groups \
-        --net=host \
-        --security-opt label=disable \
-        -e DISPLAY="$DISPLAY" \
-        -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-        -v "$HOME/.local/share/rgreceiver:/root" \
-        --device /dev/dri \
-        localhost/rgreceiver
-      '';
-      # in case it shits itself
-      rgs-safe = ''
-        xhost +local:
-        podman run -ti --rm \
-          -e DISPLAY \
-          -e LIBGL_ALWAYS_SOFTWARE=1 \
-          -e QT_XCB_GL_INTEGRATION=none \
-          -e QT_OPENGL=software \
-          -e MESA_LOADER_DRIVER_OVERRIDE=llvmpipe \
-          -e GALLIUM_DRIVER=llvmpipe \
-          --net=host \
-          localhost/rgreceiver
-      '';
-      # and if the display state is shite, then after do rgs
-      rgs-reset = ''
-        mv "$HOME/.local/share/rgreceiver" "$HOME/.local/share/rgreceiver.bak.$(date +%Y%m%d-%H%M%S)"
-        mkdir -p "$HOME/.local/share/rgreceiver"
-      '';
-    };
-  };
-
   #Bish Bash Bosh
   programs.bash = {
     enable = true;
     enableCompletion = true;
+    historyControl = [ "ignoredups" "ignorespace" ];
+    historySize = 10000;
+    historyFileSize = 10000;
     shellAliases = {
       btw = "echo 'nix fixes this'";
       nrs = "sudo nixos-rebuild switch --flake . && notify-send 'NixOS' 'Rebuild done'";
@@ -236,6 +156,7 @@
         mkdir -p "$HOME/.local/share/rgreceiver"
       '';
     };
+
   };
 
 }
