@@ -7,9 +7,9 @@
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart = ''
-        ${pkgs.nodejs}/bin/node /home/goshva/foundry/resources/app/main.js \
-          --dataPath=/home/goshva/foundrydata/FoundryVTT \
-          --host=127.0.0.1 --port=30000
+      ${pkgs.nodejs_22}/bin/node /home/goshva/foundry/main.js \
+        --dataPath=/home/goshva/foundrydata/FoundryVTT \
+        --host=127.0.0.1 --port=30000
       '';
       User = "goshva";
       Restart = "on-failure";
