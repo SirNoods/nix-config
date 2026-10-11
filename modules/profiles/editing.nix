@@ -34,7 +34,7 @@ in
     ffmpeg
     blockbench
     imagemagick
-
+    (pkgs.callPackage ../../pkgs/photocraft.nix { })
     davinciWrapped
 
     clinfo
