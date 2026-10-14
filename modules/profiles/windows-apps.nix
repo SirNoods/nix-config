@@ -12,6 +12,7 @@ in
   environment.systemPackages = with pkgs; [
     wine
     stablePkgs.bottles
-    flatpak
   ];
+
+  services.flatpak.enable = true;
 }
