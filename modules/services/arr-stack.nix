@@ -9,6 +9,9 @@
   services.audiobookshelf.enable = true;
 
   services.sabnzbd.enable = true;
+  services.sabnzbd.group = "arr-shared";
+  systemd.services.sabnzbd.serviceConfig.UMask = "0002";
+  
   services.qbittorrent = {
     enable = true;
     webuiPort = 8090;
