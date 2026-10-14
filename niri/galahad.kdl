@@ -377,6 +377,9 @@ binds {
 
     Ctrl+KP_Up { spawn "toggle-mic-reverb"; }
 
+    Ctrl+Shift+M allow-when-locked=false { spawn "discord-key" "m"; }
+    Ctrl+Shift+D { spawn "discord-key" "d"; }
+
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }

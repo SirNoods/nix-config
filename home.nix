@@ -15,6 +15,7 @@
     ./modules/scripts/yt-tools.nix
     ./modules/scripts/archive.nix
     ./modules/scripts/mic-reverb-toggle.nix
+    ./modules/scripts/discord_toggle.nix
   ];
 
   home.username = "goshva";
