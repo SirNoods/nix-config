@@ -13,6 +13,7 @@
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs
       obs-multi-rtmp
+      obs-pipewire-audio-capture
     ];
   };
 
