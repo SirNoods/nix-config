@@ -1,6 +1,8 @@
 { pkgs, lib, inputs, ... }:
 
 let
+  blenderPkgs = inputs.nixpkgs-blender.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+
   resolvePkgs = import inputs.nixpkgs-resolve {
     system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
@@ -11,24 +13,28 @@ let
       ${resolvePkgs.davinci-resolve}/bin/davinci-resolve "$@"
   '';
 
-  mcschematic = pkgs.python313Packages.buildPythonPackage rec {
+  # Built from whatever Python package set it's given, so it always matches
+  # the Python inside the pinned Blender.
+  mkMcschematic = ps: ps.buildPythonPackage rec {
     pname = "mcschematic";
     version = "11.4.2";
     format = "setuptools";
-    src = pkgs.fetchPypi {
+    src = ps.fetchPypi {
       inherit pname version;
       hash = "sha256-yHQNYV/XmuTTPTzb/AX3wRi0D8+rmti4EzaSCqfTsb0=";
     };
     doCheck = false;
   };
+
+  blenderPinned = blenderPkgs.blender.withPackages (ps: [
+    ps.pillow
+    (mkMcschematic ps)
+  ]);
 in
 
 {
   environment.systemPackages = with pkgs; [
-    (blender.withPackages (ps: [
-      ps.pillow
-      mcschematic
-    ]))
+    blenderPinned
     audacity
     yt-dlp
     ffmpeg

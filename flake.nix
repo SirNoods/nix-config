@@ -17,6 +17,8 @@
     nixpkgs-mesa25.url = "github:NixOS/nixpkgs/nixos-25.05";
     # editing pin
     nixpkgs-resolve.url = "github:NixOS/nixpkgs/2296dc841ee1af8b41ac39400f386962f7a7fb4c";
+    # Blender 5.2.1 LTS, pinned 2026-10-21
+    nixpkgs-blender.url = "github:nixos/nixpkgs/ef34387ddd751e1ab8857adf4676492d32eb24ec";
 
     home-manager = {
       url = "github:nix-community/home-manager";

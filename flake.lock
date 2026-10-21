@@ -74,6 +74,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-blender": {
+      "locked": {
+        "lastModified": 1787736819,
+        "narHash": "sha256-cV5xEJJK3BvhU8rEd4mC9UsmDi5qscv/kzGPhBRC5WA=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "9fbb54b33e91ee4ca368e35a78e0613c720600b3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "9fbb54b33e91ee4ca368e35a78e0613c720600b3",
+        "type": "github"
+      }
+    },
     "nixpkgs-mesa25": {
       "locked": {
         "lastModified": 1767313136,
@@ -143,6 +159,7 @@
         "dms": "dms",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-blender": "nixpkgs-blender",
         "nixpkgs-mesa25": "nixpkgs-mesa25",
         "nixpkgs-resolve": "nixpkgs-resolve",
         "nixpkgs-stable": "nixpkgs-stable",
