@@ -75,4 +75,14 @@
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
   ];
+
+  # eMudhra intermediates compromised (Oct 2026). Distrust their roots
+  # system-wide until nixpkgs ships an upstream fix, then remove.
+  security.pki.caCertificateBlacklist = [
+    "emSign ECC Root CA - C3"
+    "emSign ECC Root CA - G3"
+    "emSign Root CA - C1"
+    "emSign Root CA - G1"
+  ];
+
 }
