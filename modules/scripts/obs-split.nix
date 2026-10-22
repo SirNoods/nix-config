@@ -2,6 +2,53 @@
 
 let
   cfg = config.programs.obs-split;
+
+  ffmpeg = "${pkgs.ffmpeg}/bin/ffmpeg";
+  ffprobe = "${pkgs.ffmpeg}/bin/ffprobe";
+
+  trackType = lib.types.submodule {
+    options = {
+      track = lib.mkOption {
+        type = lib.types.ints.positive;
+        description = "OBS track number, 1-based, exactly as OBS numbers it.";
+      };
+
+      name = lib.mkOption {
+        type = lib.types.strMatching "[A-Za-z0-9_-]+";
+        description = "Base name for the extracted WAV file.";
+      };
+
+      normalize = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Run ffmpeg loudnorm on this track.";
+      };
+    };
+  };
+
+  # Every file prefix any layout can produce. Used to find the next sequence
+  # number, so numbering stays consistent even if layouts are mixed in a project.
+  allPrefixes = lib.unique (
+    [ cfg.videoName ]
+    ++ lib.concatMap (tracks: map (t: t.name) tracks) (lib.attrValues cfg.layouts)
+  );
+
+  # One bash case branch per layout.
+  # Each entry is "<ffmpeg audio index>:<name>:<normalize 0|1>".
+  layoutCases = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (layout: tracks: ''
+      ${lib.escapeShellArg layout})
+        TRACKS=(${
+          lib.concatMapStringsSep " " (
+            t:
+            lib.escapeShellArg "${toString (t.track - 1)}:${t.name}:${if t.normalize then "1" else "0"}"
+          ) tracks
+        })
+        ;;
+    '') cfg.layouts
+  );
+
+  layoutList = lib.concatStringsSep ", " (lib.attrNames cfg.layouts);
 in
 {
   options.programs.obs-split = {
@@ -20,27 +67,29 @@ in
     };
 
     videoName = lib.mkOption {
-      type = lib.types.str;
+      type = lib.types.strMatching "[A-Za-z0-9_-]+";
       default = "video";
       description = "Base name for the copied/transcoded video file.";
     };
 
-    micName = lib.mkOption {
-      type = lib.types.str;
-      default = "mic";
-      description = "Base name for the extracted mic WAV file.";
+    layouts = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.listOf trackType);
+      default = {
+        classic = [
+          { track = 2; name = "mic"; normalize = true; }
+          { track = 3; name = "game"; }
+        ];
+      };
+      description = ''
+        Named OBS audio track layouts. Setting this replaces the default set
+        entirely, so redefine "classic" if you still want it.
+      '';
     };
 
-    gameName = lib.mkOption {
+    defaultLayout = lib.mkOption {
       type = lib.types.str;
-      default = "game";
-      description = "Base name for the extracted game WAV file.";
-    };
-
-    normalizeMic = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Normalize mic audio using ffmpeg loudnorm.";
+      default = "classic";
+      description = "Layout used when --layout is not given.";
     };
 
     davinciProfile = lib.mkOption {
@@ -51,34 +100,68 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions =
+      [
+        {
+          assertion = lib.hasAttr cfg.defaultLayout cfg.layouts;
+          message = "programs.obs-split.defaultLayout \"${cfg.defaultLayout}\" is not defined in programs.obs-split.layouts.";
+        }
+      ]
+      ++ lib.mapAttrsToList (layout: tracks: {
+        assertion = tracks != [ ];
+        message = "programs.obs-split.layouts.${layout} has no tracks.";
+      }) cfg.layouts
+      ++ lib.mapAttrsToList (
+        layout: tracks:
+        let
+          names = map (t: t.name) tracks;
+        in
+        {
+          assertion = lib.length (lib.unique names) == lib.length names;
+          message = "programs.obs-split.layouts.${layout} uses the same name twice.";
+        }
+      ) cfg.layouts;
+
     home.packages = [
       (pkgs.writeShellScriptBin "obs-split" ''
         set -euo pipefail
 
         RAW_DIR=${lib.escapeShellArg cfg.rawDir}
         PROJECTS_DIR=${lib.escapeShellArg cfg.projectsDir}
+        VIDEO_NAME=${lib.escapeShellArg cfg.videoName}
+        PREFIXES=(${lib.concatMapStringsSep " " lib.escapeShellArg allPrefixes})
+        # loudnorm upsamples to 192 kHz internally, so resample back afterwards.
+        LOUDNORM="loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000"
+
+        usage() {
+          echo "Usage:"
+          echo "  obs-split <project> [options] [input_file]"
+          echo ""
+          echo "With no input file, the newest recording in the raw dir is used."
+          echo ""
+          echo "Options:"
+          echo "  --last <count>    Process the newest <count> recordings (default 5)"
+          echo "  --layout <name>   Track layout to use (default: ${cfg.defaultLayout})"
+          echo "  --davinci         Transcode video to DNxHR for DaVinci Resolve"
+          echo "  -h, --help        Show this help"
+          echo ""
+          echo "Layouts: ${layoutList}"
+        }
 
         PROJECT="''${1:-}"
-        shift || true
 
-        DAVINCI=false
-        MODE=""
-        VALUE=""
-
-        if [ -z "$PROJECT" ]; then
-          echo "Usage:"
-          echo "  obs-split <project_name>"
-          echo "  obs-split <project_name> <input_file>"
-          echo "  obs-split <project_name> --last <count>"
-          echo ""
-          echo "DaVinci Resolve mode:"
-          echo "  obs-split <project_name> --davinci"
-          echo "  obs-split <project_name> --davinci <input_file>"
-          echo "  obs-split <project_name> --davinci --last <count>"
+        if [ -z "$PROJECT" ] || [[ "$PROJECT" == -* ]]; then
+          usage
           exit 1
         fi
 
-        # Parse remaining arguments.
+        shift
+
+        DAVINCI=false
+        LAYOUT=${lib.escapeShellArg cfg.defaultLayout}
+        LAST=""
+        INPUT=""
+
         while [ "$#" -gt 0 ]; do
           case "$1" in
             --davinci)
@@ -87,22 +170,65 @@ in
               ;;
 
             --last)
-              MODE="--last"
-              VALUE="''${2:-5}"
+              if [[ "''${2:-}" =~ ^[0-9]+$ ]]; then
+                LAST="$2"
+                shift 2
+              else
+                LAST=5
+                shift
+              fi
+              ;;
+
+            --layout)
+              if [ -z "''${2:-}" ]; then
+                echo "--layout needs a name. Available: ${layoutList}"
+                exit 1
+              fi
+
+              LAYOUT="$2"
               shift 2
               ;;
 
+            -h|--help)
+              usage
+              exit 0
+              ;;
+
+            -*)
+              echo "Unknown option: $1"
+              exit 1
+              ;;
+
             *)
-              if [ -n "$MODE" ]; then
+              if [ -n "$INPUT" ]; then
                 echo "Unexpected argument: $1"
                 exit 1
               fi
 
-              MODE="$1"
+              INPUT="$1"
               shift
               ;;
           esac
         done
+
+        if [ -n "$LAST" ] && [ -n "$INPUT" ]; then
+          echo "Use either --last or an input file, not both."
+          exit 1
+        fi
+
+        if [ -n "$LAST" ] && [ "$LAST" -lt 1 ]; then
+          echo "Invalid count: $LAST"
+          exit 1
+        fi
+
+        case "$LAYOUT" in
+        ${layoutCases}
+          *)
+            echo "Unknown layout: $LAYOUT"
+            echo "Available: ${layoutList}"
+            exit 1
+            ;;
+        esac
 
         OUT_DIR="$PROJECTS_DIR/$PROJECT"
         ${pkgs.coreutils}/bin/mkdir -p "$OUT_DIR"
@@ -122,27 +248,25 @@ in
 
         get_next_index() {
           local highest=0
+          local prefix
           local file
           local filename
           local number
 
           shopt -s nullglob
 
-          for file in \
-            "$OUT_DIR/${cfg.videoName}_"* \
-            "$OUT_DIR/${cfg.micName}_"* \
-            "$OUT_DIR/${cfg.gameName}_"*
-          do
-            filename="''${file##*/}"
+          for prefix in "''${PREFIXES[@]}"; do
+            for file in "$OUT_DIR/''${prefix}_"*; do
+              filename="''${file##*/}"
 
-            if [[ "$filename" =~ _([0-9]+)\.[^.]+$ ]]; then
-              number="''${BASH_REMATCH[1]}"
-              number=$((10#$number))
+              if [[ "$filename" =~ _([0-9]+)\.[^.]+$ ]]; then
+                number=$((10#''${BASH_REMATCH[1]}))
 
-              if (( number > highest )); then
-                highest="$number"
+                if (( number > highest )); then
+                  highest="$number"
+                fi
               fi
-            fi
+            done
           done
 
           shopt -u nullglob
@@ -156,99 +280,99 @@ in
           local suffix
           local ext
           local video_out
-          local mic_out
-          local game_out
+          local audio_count
+          local entry
+          local idx
+          local name
+          local norm
+          local out
+          local -a video_args
+          local -a audio_args
+          local -a outputs
 
           if [ -z "''${input:-}" ] || [ ! -f "$input" ]; then
             echo "Input file not found: $input"
             exit 1
           fi
 
+          audio_count="$(
+            ${ffprobe} -v error \
+              -select_streams a \
+              -show_entries stream=index \
+              -of csv=p=0 \
+              "$input" \
+              | ${pkgs.coreutils}/bin/wc -l
+          )"
+
           suffix="_$(${pkgs.coreutils}/bin/printf '%02d' "$index")"
           ext="''${input##*.}"
 
           if [ "$DAVINCI" = true ]; then
-            video_out="$OUT_DIR/${cfg.videoName}''${suffix}.mov"
+            video_out="$OUT_DIR/$VIDEO_NAME$suffix.mov"
+            video_args=(
+              -c:v dnxhd
+              -profile:v ${lib.escapeShellArg cfg.davinciProfile}
+              -pix_fmt yuv422p
+            )
           else
-            video_out="$OUT_DIR/${cfg.videoName}''${suffix}.''${ext}"
+            video_out="$OUT_DIR/$VIDEO_NAME$suffix.$ext"
+            video_args=(-c:v copy)
           fi
 
-          mic_out="$OUT_DIR/${cfg.micName}''${suffix}.wav"
-          game_out="$OUT_DIR/${cfg.gameName}''${suffix}.wav"
+          audio_args=()
+          outputs=("$video_out")
+
+          for entry in "''${TRACKS[@]}"; do
+            IFS=: read -r idx name norm <<< "$entry"
+
+            if (( idx >= audio_count )); then
+              echo "Layout '$LAYOUT' wants OBS track $((idx + 1)),"
+              echo "but $input only has $audio_count audio tracks."
+              exit 1
+            fi
+
+            out="$OUT_DIR/$name$suffix.wav"
+
+            audio_args+=(-map "0:a:$idx")
+
+            if [ "$norm" = 1 ]; then
+              audio_args+=(-af "$LOUDNORM")
+            fi
+
+            # -rf64 auto switches to RF64 only if the file would pass the
+            # 4 GB WAV limit, so normal-length recordings stay plain WAV.
+            audio_args+=(-c:a pcm_s16le -rf64 auto "$out")
+            outputs+=("$out")
+          done
 
           echo "Processing: $input"
           echo "Sequence:   $index"
+          echo "Layout:     $LAYOUT ($audio_count audio tracks in file)"
 
           if [ "$DAVINCI" = true ]; then
-            echo "Mode:       DaVinci Resolve"
-            echo "Video:      DNxHR SQ"
-
-            ${pkgs.ffmpeg}/bin/ffmpeg \
-              -n \
-              -i "$input" \
-              -map 0:v:0 \
-              -c:v dnxhd \
-              -profile:v ${lib.escapeShellArg cfg.davinciProfile} \
-              -pix_fmt yuv422p \
-              "$video_out" \
-              -map 0:a:1 \
-              -af ${
-                lib.escapeShellArg (
-                  if cfg.normalizeMic then
-                    "loudnorm=I=-16:TP=-1.5:LRA=11"
-                  else
-                    "anull"
-                )
-              } \
-              -c:a pcm_s16le \
-              "$mic_out" \
-              -map 0:a:2 \
-              -c:a pcm_s16le \
-              "$game_out"
+            echo "Mode:       DaVinci Resolve (DNxHR)"
           else
             echo "Mode:       Standard"
-
-            ${pkgs.ffmpeg}/bin/ffmpeg \
-              -n \
-              -i "$input" \
-              -map 0:v:0 \
-              -c:v copy \
-              "$video_out" \
-              -map 0:a:1 \
-              -af ${
-                lib.escapeShellArg (
-                  if cfg.normalizeMic then
-                    "loudnorm=I=-16:TP=-1.5:LRA=11"
-                  else
-                    "anull"
-                )
-              } \
-              -c:a pcm_s16le \
-              "$mic_out" \
-              -map 0:a:2 \
-              -c:a pcm_s16le \
-              "$game_out"
           fi
 
+          ${ffmpeg} \
+            -n \
+            -i "$input" \
+            -map 0:v:0 \
+            "''${video_args[@]}" \
+            "$video_out" \
+            "''${audio_args[@]}"
+
           echo "Done:"
-          echo "  $video_out"
-          echo "  $mic_out"
-          echo "  $game_out"
+          ${pkgs.coreutils}/bin/printf '  %s\n' "''${outputs[@]}"
         }
 
         echo "Output: $OUT_DIR"
 
         NEXT_INDEX="$(get_next_index)"
 
-        if [ "$MODE" = "--last" ]; then
-          COUNT="''${VALUE:-5}"
-
-          if ! [[ "$COUNT" =~ ^[0-9]+$ ]] || [ "$COUNT" -lt 1 ]; then
-            echo "Invalid count: $COUNT"
-            exit 1
-          fi
-
-          mapfile -t INPUTS < <(get_latest_files "$COUNT")
+        if [ -n "$LAST" ]; then
+          mapfile -t INPUTS < <(get_latest_files "$LAST")
 
           if [ "''${#INPUTS[@]}" -eq 0 ]; then
             echo "No .mkv files found in $RAW_DIR"
@@ -262,11 +386,16 @@ in
             index=$((index + 1))
           done
         else
-          INPUT="$MODE"
-
           if [ -z "$INPUT" ]; then
             INPUT="$(get_latest_files 1)"
-          elif [[ "$INPUT" != /* ]]; then
+
+            if [ -z "$INPUT" ]; then
+              echo "No .mkv files found in $RAW_DIR"
+              exit 1
+            fi
+          elif [ ! -f "$INPUT" ] && [[ "$INPUT" != /* ]]; then
+            # Not a path relative to the current directory, so treat it
+            # as a file name inside the raw recordings directory.
             INPUT="$RAW_DIR/$INPUT"
           fi
 

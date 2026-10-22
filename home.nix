@@ -42,6 +42,48 @@
     enable = true;
     rawDir = "/home/goshva/3_Resources/Recordings/raw";
     projectsDir = "/home/goshva/1_Projects";
+
+    defaultLayout = "full";
+
+    layouts = {
+      # Older recordings: Track 2 mic, Track 3 game
+      classic = [
+        {
+          track = 2;
+          name = "mic";
+          normalize = true;
+        }
+        {
+          track = 3;
+          name = "game";
+        }
+      ];
+
+      # Current 5-track setup
+      full = [
+        {
+          track = 1;
+          name = "mix";
+        }
+        {
+          track = 2;
+          name = "discord";
+        }
+        {
+          track = 3;
+          name = "minecraft";
+        }
+        {
+          track = 4;
+          name = "mic";
+          normalize = true;
+        }
+        {
+          track = 5;
+          name = "desktop";
+        }
+      ];
+    };
   };
 
   programs.yt-tools.enable = true;
@@ -119,7 +161,10 @@
   programs.bash = {
     enable = true;
     enableCompletion = true;
-    historyControl = [ "ignoredups" "ignorespace" ];
+    historyControl = [
+      "ignoredups"
+      "ignorespace"
+    ];
     historySize = 10000;
     historyFileSize = 10000;
     shellAliases = {
