@@ -106,9 +106,17 @@ class VoiceEngine:
             device = "cuda" if torch.cuda.is_available() else "cpu"
         log.info("Loading Chatterbox %s on %s", self.variant, device)
         if self.variant in ("turbo", "nano"):
+            import inspect
+
             from chatterbox.tts_turbo import ChatterboxTurboTTS
 
-            self.model = ChatterboxTurboTTS.from_pretrained(device=device, nano=self.variant == "nano")
+            if self.variant == "nano" and "nano" not in inspect.signature(ChatterboxTurboTTS.from_pretrained).parameters:
+                raise RuntimeError(
+                    "The installed chatterbox-tts has no Nano model. Install it from GitHub as in "
+                    "requirements.txt, or set tts.model to \"turbo\"."
+                )
+            kwargs = {"nano": True} if self.variant == "nano" else {}
+            self.model = ChatterboxTurboTTS.from_pretrained(device=device, **kwargs)
         elif self.variant == "multilingual":
             from chatterbox.mtl_tts import ChatterboxMultilingualTTS
 
