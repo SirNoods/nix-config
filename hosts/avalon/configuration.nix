@@ -11,6 +11,7 @@
     ../../modules/services/arr-stack.nix
     ../../modules/services/foundry.nix
     ../../modules/services/caitha-site.nix
+    ../../modules/services/discord-voice-ai.nix
   ];
 
   networking.hostName = "avalon";

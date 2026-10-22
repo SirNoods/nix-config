@@ -1,0 +1,13 @@
+# Discord with DAVE (end-to-end encrypted voice), required since March 2026
+discord.py[voice]>=2.7.1
+davey>=0.1.6
+# Voice receive with DAVE decryption (fork of discord-ext-voice-recv, pinned to a tested commit)
+discord-ext-voice-recv @ git+https://github.com/idoldange/discord-ext-voice-recv@4da8413355893ed93798be9b4f3a07bc083875f6
+
+# Speech to text
+faster-whisper>=1.1
+
+# Cloned-voice text to speech (pulls in torch)
+chatterbox-tts>=0.1.7
+
+numpy
