@@ -502,6 +502,8 @@ let
       echo "  --layout <name>   Track layout for --split (default: ${cfg.defaultLayout})"
       echo "  --davinci         With --split, also write a DNxHR video for DaVinci"
       echo "  --init            Only set up the project folder (and .blend), pull nothing"
+      echo "  --undo [rec ...]  Move recordings back to the raw dir under their original"
+      echo "                    names (all of them, or e.g. 3, rec_03, rec_03.$RAW_EXT)"
       echo "  -h, --help        Show this help"
     }
 
@@ -531,6 +533,8 @@ let
     SPLIT=false
     DAVINCI=false
     INIT=false
+    UNDO=false
+    UNDO_TARGETS=()
     SPLIT_ARGS=()
 
     while [ "$#" -gt 0 ]; do
@@ -570,6 +574,17 @@ let
           shift
           ;;
 
+        --undo)
+          UNDO=true
+          shift
+
+          # Everything up to the next option is a recording to undo.
+          while [ "$#" -gt 0 ] && [[ "$1" != -* ]]; do
+            UNDO_TARGETS+=("$1")
+            shift
+          done
+          ;;
+
         -h|--help)
           usage
           exit 0
@@ -599,6 +614,138 @@ let
       ${coreutils}/mkdir -p "$FOOTAGE_DIR"
       ensure_blend
       echo "Project ready: $PROJECTS_DIR/$PROJECT"
+      exit 0
+    fi
+
+    if [ "$UNDO" = true ]; then
+      if [ -n "$LAST" ] || [ "$SPLIT" = true ] || [ "$INIT" = true ]; then
+        echo "--undo can't be combined with --last, --split or --init."
+        exit 1
+      fi
+
+      if [ ! -f "$MANIFEST" ]; then
+        echo "No manifest at $MANIFEST, nothing to undo."
+        exit 1
+      fi
+
+      # Normalise targets to file stems: 3, rec_03 and rec_03.mp4 all mean rec_03.
+      WANTED=()
+      for target in "''${UNDO_TARGETS[@]}"; do
+        if [[ "$target" =~ ^[0-9]+$ ]]; then
+          target="''${PREFIX}_$(${coreutils}/printf '%02d' "$((10#$target))")"
+        fi
+
+        WANTED+=("''${target%.*}")
+      done
+
+      is_wanted() {
+        local stem="$1"
+        local w
+
+        if [ "''${#WANTED[@]}" -eq 0 ]; then
+          return 0
+        fi
+
+        for w in "''${WANTED[@]}"; do
+          if [ "$w" = "$stem" ]; then
+            return 0
+          fi
+        done
+
+        return 1
+      }
+
+      mapfile -t LINES < <(${coreutils}/tail -n +2 "$MANIFEST")
+
+      KEEP=()
+      SEEN=()
+      UNDONE=()
+
+      echo "Moving back into $RAW_DIR:"
+
+      # Newest first, so a full undo unwinds in reverse order.
+      for (( i = ''${#LINES[@]} - 1; i >= 0; i-- )); do
+        line="''${LINES[$i]}"
+
+        if [ -z "$line" ]; then
+          continue
+        fi
+
+        IFS=$'\t' read -r file original <<< "$line"
+        stem="''${file%.*}"
+
+        if ! is_wanted "$stem"; then
+          KEEP=("$line" "''${KEEP[@]}")
+          continue
+        fi
+
+        SEEN+=("$stem")
+
+        if [ ! -f "$FOOTAGE_DIR/$file" ]; then
+          echo "  $file: not in footage/ anymore, leaving its manifest entry alone"
+          KEEP=("$line" "''${KEEP[@]}")
+          continue
+        fi
+
+        if [ -e "$RAW_DIR/$original" ]; then
+          echo "  $file: $original already exists in raw, skipping"
+          KEEP=("$line" "''${KEEP[@]}")
+          continue
+        fi
+
+        ${coreutils}/mkdir -p "$RAW_DIR"
+        ${coreutils}/mv -n "$FOOTAGE_DIR/$file" "$RAW_DIR/$original"
+        echo "  $file -> $original"
+        UNDONE+=("$stem")
+      done
+
+      # Rewrite the manifest without the undone entries.
+      {
+        ${coreutils}/printf 'file\toriginal\n'
+
+        if [ "''${#KEEP[@]}" -gt 0 ]; then
+          ${coreutils}/printf '%s\n' "''${KEEP[@]}"
+        fi
+      } > "$MANIFEST.tmp"
+      ${coreutils}/mv "$MANIFEST.tmp" "$MANIFEST"
+
+      for w in "''${WANTED[@]}"; do
+        found=false
+
+        for s in "''${SEEN[@]}"; do
+          if [ "$s" = "$w" ]; then
+            found=true
+          fi
+        done
+
+        if [ "$found" = false ]; then
+          echo "  $w: not in the manifest"
+        fi
+      done
+
+      if [ "''${#UNDONE[@]}" -eq 0 ]; then
+        echo "Nothing was moved."
+        exit 0
+      fi
+
+      # Split outputs are left in place (they may be edited or in use in the
+      # .blend), but point them out so a clean retest is one rm away.
+      shopt -s nullglob
+      LEFTOVERS=()
+
+      for stem in "''${UNDONE[@]}"; do
+        number="''${stem##*_}"
+        LEFTOVERS+=("$PROJECTS_DIR/$PROJECT/"*_"$number".*)
+      done
+
+      shopt -u nullglob
+
+      if [ "''${#LEFTOVERS[@]}" -gt 0 ]; then
+        echo ""
+        echo "Split files from those recordings are still in the project:"
+        ${coreutils}/printf '  %s\n' "''${LEFTOVERS[@]}"
+      fi
+
       exit 0
     fi
 
