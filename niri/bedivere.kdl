@@ -106,12 +106,6 @@ input {
     position x=1280 y=0
 }
 
-// Show the swww wallpaper behind the overview
-layer-rule {
-    match namespace="^swww-daemon"
-    place-within-backdrop true
-}
-
 // disables the focus ring and borders being drawn as solid rectangles
 window-rule {
     draw-border-with-background false
