@@ -642,4 +642,4 @@ binds {
 }
 
 include "dms/cursor.kdl"
-include "./dms/colors.kdl"
+include "./dms/colors.kdl"include "dms/layout.kdl"

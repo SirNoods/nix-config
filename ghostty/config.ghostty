@@ -1,3 +1,4 @@
 theme = dankcolors
 background-opacity = 0.75
 shell-integration = none
+minimum-contrast = 3
