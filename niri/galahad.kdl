@@ -111,6 +111,12 @@ window-rule {
     }
 }
 
+// Show the DMS wallpaper behind the overview
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop true
+}
+
 // Settings that influence how windows are positioned and sized.
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Layout
@@ -642,4 +648,4 @@ binds {
 }
 
 include "dms/cursor.kdl"
-include "./dms/colors.kdl"include "dms/layout.kdl"
+include "./dms/colors.kdl"
