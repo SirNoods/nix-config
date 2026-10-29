@@ -2,7 +2,7 @@
 
 let
   blenderPkgs = inputs.nixpkgs-blender.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-
+  artcraft = pkgs.callPackage ../../pkgs/artcraft.nix { };
   resolvePkgs = import inputs.nixpkgs-resolve {
     system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
@@ -40,8 +40,10 @@ in
     ffmpeg
     blockbench
     imagemagick
-    (pkgs.callPackage ../../pkgs/photocraft.nix { })
     davinciWrapped
+
+    artcraft.photocraft
+    artcraft.soundcraft
 
     clinfo
     xwayland-run
