@@ -96,6 +96,40 @@ info(
     )
 )
 
+# --- File browsers open in the project folder ----------------------------------
+#
+# The template is built in the Nix sandbox, so any directory stored now would
+# not exist on the real machine and Blender would walk up to "/". "//" means
+# "the folder this .blend is in", which Blender resolves when the file opens.
+
+file_browsers = 0
+
+for screen in bpy.data.screens:
+    for area in screen.areas:
+        for space in area.spaces:
+            if space.type != "FILE_BROWSER":
+                continue
+
+            params = getattr(space, "params", None)
+            if params is None:
+                continue
+
+            try:
+                params.directory = b"//"
+            except TypeError:
+                params.directory = "//"
+
+            params.filename = ""
+            file_browsers += 1
+
+if file_browsers:
+    info(f"pointed {file_browsers} file browser(s) at the project folder (//)")
+else:
+    warn(
+        "found no file browser with stored settings to point at the project "
+        "folder; it will open wherever Blender defaults to"
+    )
+
 # --- Save ----------------------------------------------------------------------
 
 bpy.ops.wm.save_as_mainfile(filepath=out_path, compress=True)

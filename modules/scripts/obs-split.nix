@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 let
   cfg = config.programs.obs-split;
@@ -39,6 +39,7 @@ let
   # Blender project template
   # ---------------------------------------------------------------------------
   tcfg = cfg.blenderTemplate;
+  blender = cfg.blender;
 
   capitalize = s: lib.toUpper (builtins.substring 0 1 s) + builtins.substring 1 (builtins.stringLength s) s;
 
@@ -71,7 +72,7 @@ let
     }
   );
 
-  videoTemplate = pkgs.runCommand "video-template.blend" { nativeBuildInputs = [ tcfg.package ]; } ''
+  videoTemplate = pkgs.runCommand "video-template.blend" { nativeBuildInputs = [ blender ]; } ''
     export HOME="$TMPDIR"
 
     blender \
@@ -85,13 +86,235 @@ let
     test -s "$out"
   '';
 
+  # ---------------------------------------------------------------------------
+  # normalize-mics: render "Mic*" channels from a project's .blend, then normalize
+  # ---------------------------------------------------------------------------
+  mcfg = cfg.mics;
+
+  normalizeMics = pkgs.writeShellScriptBin "normalize-mics" ''
+    set -euo pipefail
+
+    PROJECTS_DIR=${lib.escapeShellArg cfg.projectsDir}
+    FILTER=${lib.escapeShellArg mcfg.filter}
+    CHANNELS=${toString mcfg.channels}
+    PRE=_prenormalized
+    POST=_postnormalized
+
+    usage() {
+      echo "Usage:"
+      echo "  normalize-mics [project] [options]"
+      echo ""
+      echo "Renders every sequencer channel whose name starts with \"mic\" (any case)"
+      echo "from the project's .blend to mics/<Channel_Name>$PRE.wav, then runs"
+      echo "every mics/*$PRE.* file through compression and loudness"
+      echo "normalization into mics/out/<name>$POST.wav."
+      echo ""
+      echo "<project> is a folder, or a project name in $PROJECTS_DIR."
+      echo "Without it, the current folder is used."
+      echo ""
+      echo "Options:"
+      echo "  --list            Show which channels and strips would be rendered, then stop"
+      echo "  --render-only     Only render the $PRE files"
+      echo "  --normalize-only  Only normalize what's already in mics/"
+      echo "  --force           Normalize again even if the output is up to date"
+      echo "  --blend <file>    Use this .blend instead of looking for one"
+      echo "  -h, --help        Show this help"
+    }
+
+    TARGET=""
+    LIST=false
+    RENDER=true
+    NORMALIZE=true
+    FORCE=false
+    BLEND=""
+
+    while [ "$#" -gt 0 ]; do
+      case "$1" in
+        --list)
+          LIST=true
+          shift
+          ;;
+
+        --render-only)
+          NORMALIZE=false
+          shift
+          ;;
+
+        --normalize-only)
+          RENDER=false
+          shift
+          ;;
+
+        --force)
+          FORCE=true
+          shift
+          ;;
+
+        --blend)
+          if [ -z "''${2:-}" ]; then
+            echo "--blend needs a file."
+            exit 1
+          fi
+
+          BLEND="$2"
+          shift 2
+          ;;
+
+        -h|--help)
+          usage
+          exit 0
+          ;;
+
+        -*)
+          echo "Unknown option: $1"
+          exit 1
+          ;;
+
+        *)
+          if [ -n "$TARGET" ]; then
+            echo "Unexpected argument: $1"
+            exit 1
+          fi
+
+          TARGET="$1"
+          shift
+          ;;
+      esac
+    done
+
+    if [ "$RENDER" = false ] && [ "$NORMALIZE" = false ]; then
+      echo "--render-only and --normalize-only together leave nothing to do."
+      exit 1
+    fi
+
+    if [ -z "$TARGET" ]; then
+      DIR="$PWD"
+    elif [ -d "$TARGET" ]; then
+      DIR="$(${coreutils}/realpath "$TARGET")"
+    elif [ -d "$PROJECTS_DIR/$TARGET" ]; then
+      DIR="$PROJECTS_DIR/$TARGET"
+    else
+      echo "No project folder '$TARGET' here or in $PROJECTS_DIR."
+      exit 1
+    fi
+
+    MICS="$DIR/mics"
+    OUT="$MICS/out"
+
+    if [ "$RENDER" = true ]; then
+      if [ -z "$BLEND" ]; then
+        if [ -f "$DIR/''${DIR##*/}.blend" ]; then
+          BLEND="$DIR/''${DIR##*/}.blend"
+        else
+          shopt -s nullglob
+          blends=("$DIR"/*.blend)
+          shopt -u nullglob
+
+          if [ "''${#blends[@]}" -eq 1 ]; then
+            BLEND="''${blends[0]}"
+          elif [ "''${#blends[@]}" -eq 0 ]; then
+            echo "No .blend in $DIR."
+            exit 1
+          else
+            echo "Several .blend files in $DIR, pick one with --blend:"
+            ${coreutils}/printf '  %s\n' "''${blends[@]##*/}"
+            exit 1
+          fi
+        fi
+      fi
+
+      if [ ! -f "$BLEND" ]; then
+        echo "Not a file: $BLEND"
+        exit 1
+      fi
+
+      echo "Reading ''${BLEND##*/}"
+
+      list_flag=()
+      if [ "$LIST" = true ]; then
+        list_flag=(--list)
+      fi
+
+      ${blender}/bin/blender \
+        --background \
+        --quiet \
+        --factory-startup \
+        -noaudio \
+        "$BLEND" \
+        --python-exit-code 1 \
+        --python ${./render-mics.py} \
+        -- \
+        --project "$DIR" \
+        --suffix "$PRE" \
+        --ffmpeg ${ffmpeg} \
+        --ffprobe ${ffprobe} \
+        "''${list_flag[@]}"
+
+      if [ "$LIST" = true ]; then
+        exit 0
+      fi
+    fi
+
+    if [ "$NORMALIZE" = false ]; then
+      exit 0
+    fi
+
+    shopt -s nullglob
+    inputs=("$MICS"/*"$PRE".*)
+    shopt -u nullglob
+
+    if [ "''${#inputs[@]}" -eq 0 ]; then
+      echo "Nothing to normalize in $MICS (looking for *$PRE.*)."
+      exit 0
+    fi
+
+    ${coreutils}/mkdir -p "$OUT"
+
+    for input in "''${inputs[@]}"; do
+      file="''${input##*/}"
+      name="''${file%.*}"
+      name="''${name%"$PRE"}"
+      output="$OUT/$name$POST.wav"
+
+      if [ "$FORCE" = false ] && [ "$output" -nt "$input" ]; then
+        echo "Up to date: mics/out/''${output##*/}"
+        continue
+      fi
+
+      echo "Normalizing: $file -> out/''${output##*/}"
+
+      tmp="$OUT/.$name.tmp.wav"
+      trap '${coreutils}/rm -f "$tmp"' EXIT
+
+      ${ffmpeg} \
+        -hide_banner \
+        -nostdin \
+        -loglevel error \
+        -stats \
+        -y \
+        -i "$input" \
+        -af "$FILTER" \
+        -ac "$CHANNELS" \
+        -ar 48000 \
+        -c:a pcm_s16le \
+        -rf64 auto \
+        -f wav \
+        "$tmp"
+
+      ${coreutils}/mv -f "$tmp" "$output"
+      trap - EXIT
+    done
+
+    echo "Done. Drop the files from mics/out/ in at the scene's start frame."
+  '';
+
   # Adds the asset folders to Blender's file browser sidebar. Blender rewrites
   # bookmarks.txt itself (recent folders), so it can't be a read-only
   # home-manager symlink; instead each path is inserted once if missing.
   bookmarkAssets = pkgs.writeShellScript "blender-bookmark-video-assets" ''
     set -euo pipefail
 
-    config_dir="$HOME/.config/blender/${lib.versions.majorMinor tcfg.package.version}/config"
+    config_dir="$HOME/.config/blender/${lib.versions.majorMinor blender.version}/config"
     file="$config_dir/bookmarks.txt"
 
     ${coreutils}/mkdir -p "$config_dir"
@@ -501,23 +724,33 @@ let
       echo "  --split           Also run obs-split on each pulled recording"
       echo "  --layout <name>   Track layout for --split (default: ${cfg.defaultLayout})"
       echo "  --davinci         With --split, also write a DNxHR video for DaVinci"
-      echo "  --init            Only set up the project folder (and .blend), pull nothing"
+      echo "  --init            Only set up the project (folders and .blend), pull nothing."
+      echo "                    Safe to rerun on existing projects to add missing folders."
       echo "  --undo [rec ...]  Move recordings back to the raw dir under their original"
       echo "                    names (all of them, or e.g. 3, rec_03, rec_03.$RAW_EXT)"
       echo "  -h, --help        Show this help"
     }
 
-    # Copies the Blender template in as <project>.blend, unless one exists.
-    ensure_blend() {
-      local blend="$PROJECTS_DIR/$PROJECT/$PROJECT.blend"
+    PROJECT_FOLDERS=(${lib.concatMapStringsSep " " lib.escapeShellArg ([ cfg.footageDir ] ++ cfg.projectFolders)})
 
-      if [ -z "$TEMPLATE" ] || [ -e "$blend" ]; then
-        return
+    # Creates any missing project folders and copies the Blender template in
+    # as <project>.blend. Never touches anything that already exists.
+    setup_project() {
+      local root="$PROJECTS_DIR/$PROJECT"
+      local blend="$root/$PROJECT.blend"
+      local folder
+
+      for folder in "''${PROJECT_FOLDERS[@]}"; do
+        if [ ! -d "$root/$folder" ]; then
+          ${coreutils}/mkdir -p "$root/$folder"
+          echo "Created $root/$folder/"
+        fi
+      done
+
+      if [ -n "$TEMPLATE" ] && [ ! -e "$blend" ]; then
+        ${coreutils}/install -m 644 "$TEMPLATE" "$blend"
+        echo "Created $blend from the video template."
       fi
-
-      ${coreutils}/mkdir -p "$PROJECTS_DIR/$PROJECT"
-      ${coreutils}/install -m 644 "$TEMPLATE" "$blend"
-      echo "Created $blend from the video template."
     }
 
     PROJECT="''${1:-}"
@@ -611,8 +844,7 @@ let
         exit 1
       fi
 
-      ${coreutils}/mkdir -p "$FOOTAGE_DIR"
-      ensure_blend
+      setup_project
       echo "Project ready: $PROJECTS_DIR/$PROJECT"
       exit 0
     fi
@@ -862,7 +1094,7 @@ let
       index=$((index + 1))
     done
 
-    ensure_blend
+    setup_project
 
     if [ "$SPLIT" = true ]; then
       for i in "''${!PULLED_PATHS[@]}"; do
@@ -882,6 +1114,13 @@ let
   '';
 in
 {
+  imports = [
+    (lib.mkRenamedOptionModule
+      [ "programs" "obs-split" "blenderTemplate" "package" ]
+      [ "programs" "obs-split" "blender" ]
+    )
+  ];
+
   options.programs.obs-split = {
     enable = lib.mkEnableOption "OBS recording helpers (obs-pull and obs-split) for Blender/DaVinci workflows";
 
@@ -907,6 +1146,19 @@ in
       type = safeName;
       default = "footage";
       description = "Subfolder of a project that obs-pull moves recordings into.";
+    };
+
+    projectFolders = lib.mkOption {
+      type = lib.types.listOf (lib.types.strMatching "[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*");
+      default = [
+        "mics"
+        "mics/out"
+        "assets"
+      ];
+      description = ''
+        Extra folders created in every project (relative paths, nesting allowed),
+        in addition to footageDir. Created by obs-pull, including --init.
+      '';
     };
 
     footagePrefix = lib.mkOption {
@@ -964,15 +1216,33 @@ in
       description = "Subfolders created in assetsDir; each becomes a bookmark in Blender's file browser when the template is enabled.";
     };
 
+    blender = lib.mkOption {
+      type = lib.types.package;
+      default = inputs.nixpkgs-blender.legacyPackages.${pkgs.stdenv.hostPlatform.system}.blender;
+      defaultText = lib.literalExpression "inputs.nixpkgs-blender.legacyPackages.\${system}.blender";
+      description = ''
+        Blender that builds the project template and that normalize-mics reads
+        projects with. Must be the same build you edit with, or Blender warns
+        that the template was saved by a newer version.
+      '';
+    };
+
+    mics = {
+      filter = lib.mkOption {
+        type = lib.types.str;
+        default = "acompressor=threshold=-20dB:ratio=3:attack=10:release=150:makeup=1,loudnorm=I=-16:TP=-1.5:LRA=11";
+        description = "ffmpeg audio filter chain normalize-mics applies to each mic.";
+      };
+
+      channels = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 1;
+        description = "Channel count of the normalized mic files (1 = mono).";
+      };
+    };
+
     blenderTemplate = {
       enable = lib.mkEnableOption "a generated Blender video template that obs-pull copies into new projects";
-
-      package = lib.mkOption {
-        type = lib.types.package;
-        default = pkgs.blender;
-        defaultText = lib.literalExpression "pkgs.blender";
-        description = "Blender used to build the template. Should match the Blender you edit with.";
-      };
 
       width = lib.mkOption {
         type = lib.types.ints.positive;
@@ -1052,6 +1322,7 @@ in
     home.packages = [
       obsSplit
       obsPull
+      normalizeMics
     ];
 
     home.activation.obsSplitVideoAssets = lib.hm.dag.entryAfter [ "writeBoundary" ] (
