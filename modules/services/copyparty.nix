@@ -6,10 +6,6 @@
 # ranges like the other services. Needs the copyparty flake input plus
 # inputs.copyparty.nixosModules.default in avalon's module list.
 #
-# Before the first rebuild, add the password to secrets/avalon.yaml:
-#   sops secrets/avalon.yaml
-#   copyparty:
-#     goshva_password: <something long>
 
 let
   port = 3923;
@@ -17,6 +13,8 @@ let
 in
 {
   nixpkgs.overlays = [ inputs.copyparty.overlays.default ];
+
+  imports = [ inputs.copyparty.nixosModules.default ];
 
   sops.secrets."copyparty/goshva_password" = {
     owner = "copyparty";
