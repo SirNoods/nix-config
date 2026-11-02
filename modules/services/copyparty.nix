@@ -3,33 +3,26 @@
 # copyparty on avalon
 #
 # Bound to localhost only and published through Caddy, gated to Netbird
-# ranges like the other services. Needs the copyparty flake input plus
-# inputs.copyparty.nixosModules.default in avalon's module list.
-#
+# ranges like the other services.
 
 let
   port = 3923;
   domain = "files.joshs.tech";
 in
 {
-  nixpkgs.overlays = [ inputs.copyparty.overlays.default ];
-
   imports = [ inputs.copyparty.nixosModules.default ];
 
-  sops.secrets."copyparty/goshva_password" = {
-    owner = "copyparty";
-    group = "copyparty";
-  };
+  nixpkgs.overlays = [ inputs.copyparty.overlays.default ];
 
-  # Writable area that copyparty owns outright, so it never needs write
-  # access to the arr libraries or configs.
-  systemd.tmpfiles.rules = [
-    "d /mnt/storage/copyparty 0775 copyparty copyparty -"
-    "d /mnt/storage/copyparty/inbox 0775 copyparty copyparty -"
-  ];
+  sops.secrets."copyparty/goshva_password" = {
+    owner = "goshva";
+  };
 
   services.copyparty = {
     enable = true;
+
+    user = "goshva";
+    group = "users";
 
     settings = {
       i = "127.0.0.1"; # only reachable through Caddy
@@ -50,40 +43,18 @@ in
     };
 
     volumes = {
-      # Whole storage disk, read-only
+      # Whole storage disk, full access
       "/" = {
         path = "/mnt/storage";
-        access = {
-          r = [ "goshva" ];
-        };
-        flags = {
-          e2d = true; # file index for search
-          scan = 900; # rescan every 15 min for new files
-          # Don't hash big media; indexing 1.8T of video would take forever
-          nohash = "\\.(mkv|mp4|avi|m4v|webm|m4b|iso|img)$";
-        };
-      };
-
-      # Own space
-      "/share" = {
-        path = "/mnt/storage/copyparty";
         access = {
           rwmd = [ "goshva" ]; # read, write, move, delete
         };
         flags = {
-          e2d = true;
+          e2d = true; # file index for search
+          scan = 900; # rescan every 15 min for new files
           fk = 8; # filekeys, so shared links can't be guessed
-        };
-      };
-
-      # Write-only drop box
-      "/inbox" = {
-        path = "/mnt/storage/copyparty/inbox";
-        access = {
-          w = [ "goshva" ];
-        };
-        flags = {
-          e2d = true;
+          # Don't hash big media; indexing 1.8T of video would take forever
+          nohash = "\\.(mkv|mp4|avi|m4v|webm|m4b|iso|img)$";
         };
       };
     };
