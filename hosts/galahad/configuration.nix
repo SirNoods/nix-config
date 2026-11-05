@@ -51,8 +51,8 @@ in
     enable = true;
     enable32Bit = true;
 
-    package = mesa25Pkgs.mesa;
-    package32 = mesa25Pkgs.pkgsi686Linux.mesa;
+    #package = mesa25Pkgs.mesa;
+    #package32 = mesa25Pkgs.pkgsi686Linux.mesa;
 
   };
 
