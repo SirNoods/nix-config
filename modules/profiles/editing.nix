@@ -26,7 +26,7 @@ let
     doCheck = false;
   };
 
-  blenderPinned = blenderPkgs.blender.withPackages (ps: [
+  blenderPinned = pkgs.blender.withPackages (ps: [
     ps.pillow
     (mkMcschematic ps)
   ]);

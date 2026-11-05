@@ -1218,15 +1218,14 @@ in
 
     blender = lib.mkOption {
       type = lib.types.package;
-      default = inputs.nixpkgs-blender.legacyPackages.${pkgs.stdenv.hostPlatform.system}.blender;
-      defaultText = lib.literalExpression "inputs.nixpkgs-blender.legacyPackages.\${system}.blender";
+      default = pkgs.blender;
+      defaultText = lib.literalExpression "pkgs.blender";
       description = ''
-        Blender that builds the project template and that normalize-mics reads
-        projects with. Must be the same build you edit with, or Blender warns
-        that the template was saved by a newer version.
+      Blender that builds the project template and that normalize-mics reads
+      projects with. Must be the same build you edit with, or Blender warns
+      that the template was saved by a newer version.
       '';
     };
-
     mics = {
       filter = lib.mkOption {
         type = lib.types.str;
