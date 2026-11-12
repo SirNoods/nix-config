@@ -12,6 +12,7 @@
     inputs.vicinae.homeManagerModules.default
     inputs.dms.homeModules.dank-material-shell
     ./modules/scripts/obs-split.nix
+    ./modules/scripts/rough-cut/rough-cut.nix
     ./modules/scripts/yt-tools.nix
     ./modules/scripts/archive.nix
     ./modules/scripts/mic-reverb-toggle.nix
@@ -86,6 +87,8 @@
       ];
     };
   };
+
+  programs.rough-cut.enable = true;
 
   programs.yt-tools.enable = true;
 
