@@ -2,12 +2,12 @@
 
 let
   mkArtcraftApp =
-    { pname, version, hash, extraPkgs ? (pkgs: [ ]) }:
+    { pname, version, hash
+    , url ? "https://github.com/storytold/${pname}/releases/download/v${version}/${pname}-${version}-linux-x86_64.AppImage"
+    , extraPkgs ? (pkgs: [ ])
+    }:
     let
-      src = fetchurl {
-        url = "https://github.com/storytold/${pname}/releases/download/v${version}/${pname}-${version}-linux-x86_64.AppImage";
-        inherit hash;
-      };
+      src = fetchurl { inherit url hash; };
       contents = appimageTools.extractType2 { inherit pname version src; };
     in
     appimageTools.wrapType2 {
@@ -29,6 +29,13 @@ let
     };
 in
 {
+  artcraft = mkArtcraftApp rec {
+    pname = "artcraft";
+    version = "0.41.1";
+    url = "https://github.com/storytold/artcraft/releases/download/artcraft-v${version}/artcraft-${version}-linux-x86_64.AppImage";
+    hash = "sha256-uzJle26B6OR9pEyk52SxrxTXfYaQskiiY6Ss0SGLfS0=";
+  };
+
   photocraft = mkArtcraftApp {
     pname = "photocraft";
     version = "0.16.0";

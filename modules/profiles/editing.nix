@@ -44,6 +44,7 @@ in
 
     artcraft.photocraft
     artcraft.soundcraft
+    #artcraft.artcraft
 
     clinfo
     xwayland-run
