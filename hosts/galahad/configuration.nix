@@ -25,6 +25,7 @@ in
     ../../modules/profiles/streaming.nix
     ../../modules/profiles/workstation.nix
     ../../modules/profiles/windows-apps.nix
+    ../../modules/profiles/dev.nix
 
     # Services
     ../../modules/services/netbird.nix
