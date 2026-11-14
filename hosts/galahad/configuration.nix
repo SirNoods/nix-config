@@ -26,6 +26,7 @@ in
     ../../modules/profiles/workstation.nix
     ../../modules/profiles/windows-apps.nix
     ../../modules/profiles/dev.nix
+    #../../modules/profiles/nixified-ai.nix
 
     # Services
     ../../modules/services/netbird.nix
