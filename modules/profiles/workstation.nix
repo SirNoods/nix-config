@@ -6,6 +6,7 @@
 
 {
   environment.systemPackages = with pkgs; [
+    pureref
     vscodium
     jellyfin-desktop
     discord

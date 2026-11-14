@@ -49,6 +49,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixified-ai.url = "github:nixified-ai/flake";
+
   };
 
   outputs =
