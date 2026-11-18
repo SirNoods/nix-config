@@ -47,4 +47,10 @@ in
     version = "0.13.1";
     hash = "sha256-YH9KE/kptfI33mHpBAvkv8hqBmRL8qEDxz97nITTvxk=";
   };
+  
+  craft-anything = mkArtcraftApp {
+    pname = "craft-anything";
+    version = "0.6.1";
+    hash = lib.fakeHash;
+  };
 }
