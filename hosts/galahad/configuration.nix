@@ -63,6 +63,7 @@ in
     192.168.178.32 goblin
     192.168.178.32 caithawiki.joshs.tech
     192.168.178.32 foundry.joshs.tech
+    162.19.224.101 localhost
   '';
 
   fileSystems."/mnt/hdd" = {
